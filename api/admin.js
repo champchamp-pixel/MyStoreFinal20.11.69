@@ -23,6 +23,17 @@ function sameCode(a, b) {
   return x.length === y.length && crypto.timingSafeEqual(x, y);
 }
 
+function todayBangkokIso() {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Bangkok',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const map = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+  return `${map.year}-${map.month}-${map.day}`;
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ ok: false, message: 'ใช้ได้เฉพาะ POST' });
@@ -55,6 +66,14 @@ module.exports = async (req, res) => {
   }
 
   try {
+    // ซิงก์ app_config.as_of เป็นวันปัจจุบันก่อนทำงานจริง (เว้นการตรวจไฟสถานะ by='STATUS' ที่ต้องไม่เปลี่ยนข้อมูล)
+    if (String(b.by).trim().toUpperCase() !== 'STATUS') {
+      await fetch(`${url}/rest/v1/app_config?id=eq.1`, {
+        method: 'PATCH',
+        headers: { apikey: key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ as_of: todayBangkokIso() }),
+      }).catch(() => {});
+    }
     const r = await fetch(`${url}/rest/v1/rpc/${fn}`, {
       method: 'POST',
       headers: { apikey: key, 'Content-Type': 'application/json' },
