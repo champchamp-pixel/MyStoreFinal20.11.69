@@ -27,12 +27,13 @@ module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ ok: false, message: 'ใช้ได้เฉพาะ POST' });
 
-  const url = process.env.SUPABASE_URL;
+  const rawUrl = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SECRET_KEY;
   const admin = process.env.ADMIN_CODE;
-  if (!url || !key || !admin) {
+  if (!rawUrl || !key || !admin) {
     return res.status(500).json({ ok: false, message: 'ยังไม่ได้ตั้ง SUPABASE_URL, SUPABASE_SECRET_KEY หรือ ADMIN_CODE ใน Vercel' });
   }
+  const url = rawUrl.replace(/\/+$/, '');
   // รหัสผู้ดูแลส่งทาง header ไม่ใส่ใน URL
   if (!sameCode(req.headers['x-admin-code'] || '', admin)) {
     return res.status(401).json({ ok: false, message: 'รหัสผู้ดูแลไม่ถูกต้อง' });

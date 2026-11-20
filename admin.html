@@ -382,8 +382,9 @@
     <a class="nav-brand" href="./index.html"><span class="brand-square" aria-hidden="true"></span>คลังข้อมูลยา</a>
     <div class="nav-links">
       <a href="./index.html">หน้าแรก</a>
-      <a href="./dashboard.html">Dashboard คลังยา</a>
+      <a href="./pos.html">หน้าขายยา</a>
       <a href="./admin.html" aria-current="page">จัดการระบบ</a>
+      <a href="./dashboard.html">Dashboard คลังยา</a>
       <a href="./status.html">ตรวจสถานะระบบ</a>
     </div>
   </div>
@@ -787,8 +788,9 @@ async function loadData() {
   btn.disabled = false;
 
   if (!res.ok || !json || typeof json !== 'object') {
+    const errMsg = json && (json.message || json.error);
     showLoadError('โหลดข้อมูลไม่สำเร็จ',
-      (json && json.message ? String(json.message) : 'ระบบตอบกลับผิดพลาด (HTTP ' + res.status + ')') +
+      (errMsg ? String(errMsg) : 'ระบบตอบกลับผิดพลาด (HTTP ' + res.status + ')') +
       (state.loadedOnce ? ' (ตัวเลขบนจออาจไม่ตรงกับฐานข้อมูล)' : ''));
     return;
   }
@@ -1316,7 +1318,7 @@ $('#btn-add-drug').addEventListener('click', () => {
         reorder_level: Number(v.reorder_level)
       }
     }),
-    success: (r, v) => 'เพิ่มยา ' + (r.sku || v.sku.trim().toUpperCase()) + ' เข้าบัญชียาแล้ว'
+    success: (r, v) => 'เพิ่มยา ' + ((r.drug && r.drug.sku) || r.sku || v.sku.trim().toUpperCase()) + ' เข้าบัญชียาแล้ว'
   });
 });
 
@@ -1419,8 +1421,11 @@ $('#btn-receive').addEventListener('click', () => {
       qty: Number(v.qty),
       unit_cost: Number(v.unit_cost)
     }),
-    success: (r, v) => 'รับยาเข้าแล้ว · รหัสล็อตใหม่ ' + (r.stock_id ? str(r.stock_id) : '(ระบบไม่ได้ส่งรหัสกลับมา)') +
-      ' · ' + v.sku + ' เลขล็อต ' + v.lot.trim() + ' จำนวน ' + fmtInt(v.qty)
+    success: (r, v) => {
+      const sid = (r.stock && r.stock.stock_id) || r.stock_id;
+      return 'รับยาเข้าแล้ว · รหัสล็อตใหม่ ' + (sid ? str(sid) : '(ระบบไม่ได้ส่งรหัสกลับมา)') +
+        ' · ' + v.sku + ' เลขล็อต ' + v.lot.trim() + ' จำนวน ' + fmtInt(v.qty);
+    }
   });
 });
 

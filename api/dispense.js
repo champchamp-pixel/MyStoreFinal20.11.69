@@ -6,11 +6,12 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ ok: false, message: 'ใช้ได้เฉพาะ POST' });
   }
-  const url = process.env.SUPABASE_URL;
+  const rawUrl = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SECRET_KEY;
-  if (!url || !key) {
+  if (!rawUrl || !key) {
     return res.status(500).json({ ok: false, message: 'ยังไม่ได้ตั้ง SUPABASE_URL หรือ SUPABASE_SECRET_KEY ใน Vercel' });
   }
+  const url = rawUrl.replace(/\/+$/, '');
   let b = req.body;
   if (typeof b === 'string') { try { b = JSON.parse(b); } catch { b = {}; } }
   b = b || {};
@@ -31,6 +32,7 @@ module.exports = async (req, res) => {
     if (r.ok) return res.status(200).json(data);
     // P0001 = ข้อความที่ฟังก์ชัน raise เอง (เหตุผลทางธุรกิจ) ส่งต่อให้ผู้ใช้ได้
     if (data && data.code === 'P0001') return res.status(400).json({ ok: false, message: data.message });
+    if (data && /^22/.test(data.code || '')) return res.status(400).json({ ok: false, message: 'จำนวนหรือค่าที่ส่งผิดรูปแบบหรือเกินช่วง' });
     return res.status(502).json({ ok: false, message: 'ฐานข้อมูลตอบผิดปกติ ตรวจ key และชื่อฟังก์ชัน' });
   } catch (e) {
     return res.status(502).json({ ok: false, message: 'เชื่อมฐานข้อมูลไม่ได้' });
