@@ -15,6 +15,18 @@ const TABLES = {
 
 const PAGE_SIZE = 1000;
 
+// วันอ้างอิงของระบบยึดวันที่จริงปัจจุบันตามเวลาประเทศไทย (Asia/Bangkok) รูปแบบ YYYY-MM-DD
+function todayBangkokIso() {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Bangkok',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const map = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+  return `${map.year}-${map.month}-${map.day}`;
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   const rawUrl = process.env.SUPABASE_URL;
@@ -55,7 +67,7 @@ module.exports = async (req, res) => {
     if (!cfg.length || !drugs.length || !stock.length) {
       return res.status(502).json({ error: 'ได้ข้อมูลว่าง ตรวจนโยบายสิทธิ์เข้าถึงแถว (RLS) ของตาราง' });
     }
-    const meta = { as_of: cfg[0].as_of, source: 'supabase' };
+    const meta = { as_of: todayBangkokIso(), config_as_of: cfg[0].as_of, source: 'supabase' };
     const out = {
       drugs: { meta, items: drugs },
       stock: { meta, items: stock },
