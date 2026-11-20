@@ -1,59 +1,121 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="หน้าขายยาสำหรับผู้ช่วยเภสัชกร เลือกยา กรอกจำนวน และบันทึกการจ่ายยาผ่าน API เชื่อมต่อ Supabase">
   <title>หน้าขายยา · ระบบร้านยาจำลอง</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('pharmacy_theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      color-scheme: light;
-      --primary: #76b900;
-      --on-primary: #000000;
-      --primary-dark: #5a8d00;
-      --ink: #000000;
-      --canvas: #ffffff;
-      --surface-dark: #000000;
-      --surface-soft: #f7f7f7;
-      --surface-elevated: #1a1a1a;
-      --hairline: #cccccc;
-      --hairline-strong: #5e5e5e;
-      --body: #1a1a1a;
-      --mute: #757575;
-      --stone: #898989;
-      --ash: #a7a7a7;
-      --on-dark: #ffffff;
-      --on-dark-mute: rgba(255, 255, 255, 0.7);
-      --link-blue: #0046a4;
-      --error: #e52020;
-      --error-deep: #650b0b;
-      --error-bg: #fdecec;
-      --warning: #df6500;
-      --warning-bright: #ef9100;
-      --warning-bg: #feeeb2;
-      --success-deep: #3f8500;
-      --success-bg: #eef7df;
-      --radius-none: 0px;
-      --radius-sm: 2px;
+    :root, [data-theme="dark"] {
+      color-scheme: dark;
+      --primary: #84cc16;
+      --primary-bright: #a3e635;
+      --primary-dark: #65a30d;
+      --on-primary: #0b1305;
+      --cyan: #38bdf8;
+      --bg-base: #111827;
+      --bg-grad-1: #16213a;
+      --bg-grad-2: #0f172a;
+      --nav-bg: rgba(15, 23, 42, 0.85);
+      --utility-bg: rgba(11, 17, 32, 0.92);
+      --crumb-bg: rgba(20, 29, 47, 0.8);
+      --card-bg: rgba(24, 34, 54, 0.86);
+      --card-solid: #1a2438;
+      --soft-bg: rgba(30, 41, 59, 0.85);
+      --input-bg: #1e293b;
+      --row-hover: rgba(51, 65, 85, 0.55);
+      --border: rgba(148, 163, 184, 0.24);
+      --border-strong: rgba(148, 163, 184, 0.42);
+      --text: #f8fafc;
+      --body: #e2e8f0;
+      --mute: #94a3b8;
+      --stone: #64748b;
+      --error: #f87171;
+      --error-text: #fecaca;
+      --error-bg: rgba(127, 29, 29, 0.42);
+      --warn: #f59e0b;
+      --warn-text: #fde68a;
+      --warn-bg: rgba(120, 53, 15, 0.4);
+      --ok-text: #bef264;
+      --ok-bg: rgba(54, 83, 20, 0.36);
+      --ret-text: #7dd3fc;
+      --ret-bg: rgba(12, 74, 110, 0.38);
+      --footer-bg: rgba(11, 17, 32, 0.9);
+      --footer-bar: rgba(15, 23, 42, 0.95);
+      --glow: 0 0 22px rgba(132, 204, 22, 0.18);
+      --card-shadow: 0 8px 32px rgba(2, 6, 23, 0.35);
+      --radius: 6px;
       --font: 'Inter', 'Noto Sans Thai', Arial, sans-serif;
     }
 
+    [data-theme="light"] {
+      color-scheme: light;
+      --primary: #65a30d;
+      --primary-bright: #76b900;
+      --primary-dark: #4d7c0f;
+      --on-primary: #ffffff;
+      --cyan: #0284c7;
+      --bg-base: #eef4fb;
+      --bg-grad-1: #e4eefc;
+      --bg-grad-2: #f5f8ff;
+      --nav-bg: rgba(255, 255, 255, 0.86);
+      --utility-bg: rgba(241, 245, 252, 0.92);
+      --crumb-bg: rgba(241, 245, 249, 0.86);
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-solid: #ffffff;
+      --soft-bg: rgba(241, 245, 249, 0.92);
+      --input-bg: #ffffff;
+      --row-hover: rgba(226, 232, 240, 0.55);
+      --border: rgba(15, 23, 42, 0.14);
+      --border-strong: rgba(15, 23, 42, 0.28);
+      --text: #0f172a;
+      --body: #1e293b;
+      --mute: #475569;
+      --stone: #64748b;
+      --error: #dc2626;
+      --error-text: #7f1d1d;
+      --error-bg: rgba(254, 226, 226, 0.92);
+      --warn: #d97706;
+      --warn-text: #78350f;
+      --warn-bg: rgba(254, 243, 199, 0.94);
+      --ok-text: #365314;
+      --ok-bg: rgba(236, 252, 203, 0.94);
+      --ret-text: #0369a1;
+      --ret-bg: rgba(224, 242, 254, 0.92);
+      --footer-bg: rgba(241, 245, 252, 0.92);
+      --footer-bar: rgba(226, 232, 240, 0.92);
+      --glow: 0 0 18px rgba(101, 163, 13, 0.16);
+      --card-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+    }
+
     *, *::before, *::after { box-sizing: border-box; }
-    html { background: var(--surface-dark); -webkit-tap-highlight-color: transparent; }
+    html { background: var(--bg-base); -webkit-tap-highlight-color: transparent; }
     body {
       margin: 0;
       min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      background: var(--canvas);
+      background: radial-gradient(ellipse at 20% 0%, var(--bg-grad-1) 0%, var(--bg-base) 52%, var(--bg-grad-2) 100%);
       color: var(--body);
       font: 400 16px/1.6 var(--font);
+      position: relative;
+      overflow-x: hidden;
     }
+
+    #cosmos-bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    .page-layer { position: relative; z-index: 1; min-height: 100dvh; display: flex; flex-direction: column; }
+
     h1, h2, h3, p { margin: 0; }
-    h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: 0; }
+    h1, h2, h3 { font-weight: 700; line-height: 1.25; }
     button, input, select { font: inherit; }
     button, select { cursor: pointer; }
     :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
@@ -61,122 +123,109 @@
 
     .container { width: min(1280px, 100%); margin-inline: auto; padding-inline: clamp(16px, 4vw, 48px); }
 
-    /* ---------- Utility Bar + Primary Nav (Black Canvas) ---------- */
-    .utility-bar {
-      background: var(--surface-dark); color: var(--on-dark-mute);
-      border-bottom: 1px solid #222222; font-size: 12px; line-height: 1.25;
-    }
+    /* ---------- Utility Bar + Primary Nav ---------- */
+    .utility-bar { background: var(--utility-bg); color: var(--mute); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); font-size: 12px; }
     .utility-inner { min-height: 32px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 6px; }
-    .utility-tag { color: var(--on-dark); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .utility-tag { color: var(--primary); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 
-    .primary-nav {
-      position: sticky; top: 0; z-index: 20;
-      background: var(--surface-dark); color: var(--on-dark);
-      border-bottom: 1px solid var(--hairline-strong);
-      box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.3);
+    .primary-nav { position: sticky; top: 0; z-index: 20; background: var(--nav-bg); color: var(--text); border-bottom: 1px solid var(--border); backdrop-filter: blur(14px); }
+    .nav-inner { min-height: 64px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; padding-block: 8px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-size: 17px; font-weight: 700; }
+    .brand-square { width: 12px; height: 12px; background: var(--primary); box-shadow: 0 0 12px var(--primary); flex: 0 0 12px; }
+    .nav-right { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 18px; }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+    .nav-links a { color: var(--mute); text-decoration: none; font-size: 15px; font-weight: 700; padding: 8px 0; border-bottom: 2px solid transparent; }
+    .nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--text); border-bottom-color: var(--primary); }
+    .theme-toggle {
+      display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 6px 14px;
+      background: var(--soft-bg); color: var(--text); border: 1px solid var(--border-strong);
+      border-radius: var(--radius); font-size: 14px; font-weight: 700;
     }
-    .nav-inner { min-height: 64px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; padding-block: 8px; }
-    .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--on-dark); text-decoration: none; font-size: 16px; font-weight: 700; }
-    .brand-square { width: 12px; height: 12px; background: var(--primary); flex: 0 0 12px; }
-    .nav-links { display: flex; flex-wrap: wrap; gap: 4px 20px; }
-    .nav-links a {
-      color: var(--on-dark-mute); text-decoration: none; font-size: 15px; font-weight: 700;
-      padding: 8px 0; border-bottom: 2px solid transparent;
-    }
-    .nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--on-dark); border-bottom-color: var(--primary); }
+    .theme-toggle:hover { border-color: var(--primary); }
 
-    /* ---------- Breadcrumb Bar (Soft Surface) ---------- */
-    .breadcrumb-bar { background: var(--surface-soft); border-bottom: 1px solid var(--hairline); }
+    /* ---------- Breadcrumb ---------- */
+    .breadcrumb-bar { background: var(--crumb-bg); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); }
     .breadcrumb-inner {
-      min-height: 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
-      gap: 8px 16px; padding-block: 8px; font-size: 14px; font-weight: 700;
+      min-height: 44px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+      gap: 8px 16px; padding-block: 6px; font-size: 14px; font-weight: 700;
     }
     .breadcrumb-trail { display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; color: var(--body); }
     .breadcrumb-trail a { color: var(--body); text-decoration: none; }
-    .breadcrumb-trail a:hover { color: var(--ink); text-decoration: underline; }
+    .breadcrumb-trail a:hover { color: var(--primary); text-decoration: underline; }
     .crumb-sep { color: var(--mute); }
-    .breadcrumb-note { color: var(--mute); font-size: 14px; font-weight: 700; }
+    .breadcrumb-note { color: var(--mute); font-size: 14px; font-weight: 600; }
 
-    /* ---------- Dark Hero Header ---------- */
-    .hero-band { background: var(--surface-dark); color: var(--on-dark); padding-block: clamp(28px, 4vw, 48px); }
-    .hero-inner { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 20px 32px; }
+    /* ---------- Hero Header ---------- */
+    .hero-band { padding-block: clamp(26px, 4vw, 44px) clamp(16px, 3vw, 24px); }
+    .hero-inner { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 18px 32px; }
     .eyebrow {
       display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px;
-      color: var(--primary); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 4px 12px; background: var(--soft-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      color: var(--primary); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
     }
-    .eyebrow::before { content: ""; width: 12px; height: 12px; background: var(--primary); flex: 0 0 12px; }
-    .hero-copy h1 { color: var(--on-dark); font-size: clamp(28px, 4.5vw, 40px); }
-    .hero-copy p { color: var(--on-dark-mute); font-size: 16px; margin-top: 6px; }
+    .eyebrow::before { content: ""; width: 8px; height: 8px; background: var(--primary); box-shadow: 0 0 10px var(--primary); flex: 0 0 8px; }
+    .hero-copy h1 { color: var(--text); font-size: clamp(28px, 4.5vw, 40px); }
+    .hero-copy p { color: var(--mute); font-size: 16px; margin-top: 6px; max-width: 64ch; }
     .hero-meta {
-      position: relative;
-      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-      background: var(--surface-elevated); border: 1px solid var(--hairline-strong);
-      border-radius: var(--radius-sm); padding: 14px 18px 14px 22px;
+      position: relative; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 18px 14px 22px; backdrop-filter: blur(14px); box-shadow: var(--card-shadow);
     }
     .hero-meta::before { content: ""; position: absolute; top: 0; left: 0; width: 12px; height: 12px; background: var(--primary); }
     .meta-item { display: flex; flex-direction: column; gap: 2px; }
-    .meta-label { color: var(--on-dark-mute); font-size: 12px; font-weight: 700; text-transform: uppercase; }
+    .meta-label { color: var(--mute); font-size: 12px; font-weight: 700; text-transform: uppercase; }
     .meta-value { color: var(--primary); font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
-    .meta-divider { width: 1px; height: 36px; background: var(--hairline-strong); }
+    .meta-divider { width: 1px; height: 36px; background: var(--border); }
 
-    /* ---------- Paper-White Main Canvas ---------- */
-    main { flex: 1; background: var(--canvas); padding-block: clamp(24px, 4vw, 48px); }
+    /* ---------- Main ---------- */
+    main { flex: 1; padding-block: 12px clamp(32px, 5vw, 56px); }
 
     .notice-bar {
       padding: 12px 16px; margin-bottom: 20px;
-      background: var(--surface-soft); border: 1px solid var(--hairline); border-left: 4px solid var(--ink);
-      border-radius: var(--radius-sm); color: var(--ink); font-size: 16px; font-weight: 700;
+      background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--cyan);
+      border-radius: var(--radius); color: var(--text); font-size: 16px; font-weight: 700; backdrop-filter: blur(10px);
     }
 
     /* แถบสีเหลือง "ข้อมูลสำรอง" */
     .fallback-banner {
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 20px;
       padding: 14px 18px; margin-bottom: 24px;
-      background: var(--warning-bg); border: 1px solid var(--warning); border-left: 5px solid var(--warning);
-      border-radius: var(--radius-sm); color: var(--ink);
+      background: var(--warn-bg); border: 1px solid var(--warn); border-left: 5px solid var(--warn);
+      border-radius: var(--radius); color: var(--warn-text); backdrop-filter: blur(10px);
     }
-    .fallback-banner strong { font-size: 18px; color: var(--ink); display: block; }
-    .fallback-banner p { font-size: 16px; color: var(--body); }
+    .fallback-banner strong { font-size: 18px; display: block; }
+    .fallback-banner p { font-size: 16px; }
 
     .load-error {
       padding: 16px 18px; margin-bottom: 24px;
       background: var(--error-bg); border: 1px solid var(--error); border-left: 5px solid var(--error);
-      border-radius: var(--radius-sm); color: var(--error-deep); font-weight: 700;
+      border-radius: var(--radius); color: var(--error-text); font-weight: 700;
     }
-
     .loading-state { padding: 32px 0; color: var(--mute); font-weight: 700; font-size: 18px; }
 
     /* ---------- POS 2-Column Tablet Grid ---------- */
-    .pos-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-      gap: 24px;
-      align-items: start;
-    }
+    .pos-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 24px; align-items: start; }
 
     .card {
-      position: relative;
-      background: var(--canvas);
-      border: 1px solid var(--hairline);
-      border-radius: var(--radius-sm);
-      padding: 24px;
+      position: relative; background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px; backdrop-filter: blur(14px); box-shadow: var(--card-shadow);
     }
     .card::before { content: ""; position: absolute; top: 0; left: 0; width: 12px; height: 12px; background: var(--primary); }
     .card-head {
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
-      gap: 8px 16px; padding-bottom: 14px; margin-bottom: 18px; border-bottom: 1px solid var(--hairline);
+      gap: 8px 16px; padding-bottom: 14px; margin-bottom: 18px; border-bottom: 1px solid var(--border);
     }
-    .card-head h2 { font-size: 22px; color: var(--ink); }
+    .card-head h2 { font-size: 22px; color: var(--text); }
     .card-count { color: var(--mute); font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
-    /* ---------- Form Controls (NVIDIA 2px angular, 48px tablet-friendly) ---------- */
+    /* ---------- Form Controls ---------- */
     .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-    .field label { font-size: 16px; font-weight: 700; color: var(--ink); }
+    .field label { font-size: 16px; font-weight: 700; color: var(--text); }
     .field-hint { font-size: 14px; color: var(--mute); }
     input[type=text], input[type=number], input[type=search], select {
       width: 100%; min-height: 48px; padding: 10px 14px;
-      background: var(--canvas); color: var(--ink);
-      border: 1px solid var(--hairline); border-radius: var(--radius-sm);
+      background: var(--input-bg); color: var(--text);
+      border: 1px solid var(--border-strong); border-radius: var(--radius);
       font-size: 16px; line-height: 1.5;
     }
     input:focus, select:focus { outline: none; border: 2px solid var(--primary); }
@@ -185,137 +234,120 @@
     /* ---------- Tablet Drug List ---------- */
     .drug-list {
       list-style: none; margin: 12px 0 0; padding: 0;
-      border: 1px solid var(--hairline); border-radius: var(--radius-sm);
-      max-height: 460px; overflow: auto;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      max-height: 460px; overflow: auto; background: var(--card-solid);
     }
-    .drug-list li { border-bottom: 1px solid var(--hairline); }
+    .drug-list li { border-bottom: 1px solid var(--border); }
     .drug-list li:last-child { border-bottom: 0; }
     .drug-item {
       width: 100%; min-height: 68px; padding: 12px 16px;
       display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      background: var(--canvas); color: var(--ink); border: 0; text-align: left;
+      background: transparent; color: var(--text); border: 0; text-align: left;
     }
-    .drug-item:hover { background: var(--surface-soft); }
+    .drug-item:hover { background: var(--row-hover); }
     .drug-item[aria-pressed="true"] {
-      background: var(--ink); color: var(--on-dark);
+      background: var(--soft-bg);
       box-shadow: inset 4px 0 0 var(--primary);
     }
     .drug-item-main { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-    .drug-item-title { font-size: 16px; font-weight: 700; }
+    .drug-item-title { font-size: 16px; font-weight: 700; color: var(--text); }
     .drug-item-sub { font-size: 15px; color: var(--mute); }
-    .drug-item[aria-pressed="true"] .drug-item-sub { color: var(--on-dark-mute); }
     .drug-item-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-    .drug-qty { font-size: 18px; font-weight: 700; color: var(--success-deep); font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .drug-item[aria-pressed="true"] .drug-qty { color: var(--primary); }
+    .drug-qty { font-size: 18px; font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
     /* ป้าย ต่ำกว่าจุดสั่งซื้อ (มีทั้งสีและข้อความ) */
     .badge-low {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 2px 10px; border-radius: var(--radius-sm);
-      background: var(--warning-bg); border: 1px solid var(--warning);
-      color: #8a3d00; font-size: 14px; font-weight: 700; white-space: nowrap;
+      padding: 2px 10px; border-radius: 4px;
+      background: var(--warn-bg); border: 1px solid var(--warn);
+      color: var(--warn-text); font-size: 14px; font-weight: 700; white-space: nowrap;
     }
-    .badge-low::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--warning); }
+    .badge-low::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--warn); }
 
     /* ---------- Selected Drug Summary Box ---------- */
     .selected-box {
       padding: 18px; margin-bottom: 20px;
-      background: var(--surface-soft); border: 1px solid var(--hairline); border-left: 4px solid var(--primary);
-      border-radius: var(--radius-sm);
+      background: var(--soft-bg); border: 1px solid var(--border); border-left: 4px solid var(--primary);
+      border-radius: var(--radius);
       display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px 20px;
     }
-    .selected-sku { font-size: 14px; font-weight: 700; color: var(--mute); text-transform: uppercase; }
-    .selected-name { font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+    .selected-sku { font-size: 14px; font-weight: 700; color: var(--cyan); text-transform: uppercase; }
+    .selected-name { font-size: 20px; font-weight: 700; color: var(--text); margin-top: 2px; }
     .selected-meta { font-size: 15px; color: var(--body); margin-top: 4px; }
     .selected-stat { text-align: right; margin-left: auto; }
     .selected-stat-label { font-size: 14px; font-weight: 700; color: var(--mute); }
     .selected-stat-value { font-size: 32px; font-weight: 700; line-height: 1.2; color: var(--primary); font-variant-numeric: tabular-nums; }
-    .selected-stat-unit { font-size: 15px; font-weight: 700; color: var(--ink); }
+    .selected-stat-unit { font-size: 15px; font-weight: 700; color: var(--text); }
 
-    /* ---------- Buttons (NVIDIA 2px angular, large tablet targets) ---------- */
+    /* ---------- Buttons ---------- */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      min-height: 48px; padding: 12px 24px;
-      border-radius: var(--radius-sm); border: 1px solid transparent;
+      min-height: 48px; padding: 12px 22px;
+      border-radius: var(--radius); border: 1px solid transparent;
       font-size: 16px; font-weight: 700; line-height: 1.25; white-space: nowrap;
     }
     .btn-primary {
       width: 100%; min-height: 56px; font-size: 18px;
-      background: var(--primary); color: var(--on-primary); border-color: var(--primary);
+      background: var(--primary); color: var(--on-primary); border-color: var(--primary); box-shadow: var(--glow);
     }
-    .btn-primary:hover:not(:disabled), .btn-primary:active:not(:disabled) {
-      background: var(--primary-dark); border-color: var(--primary-dark);
-    }
-    .btn-outline {
-      background: var(--canvas); color: var(--ink); border: 2px solid var(--primary);
-    }
-    .btn-outline:hover:not(:disabled) { background: var(--primary); color: var(--on-primary); }
-    .btn-outline-dark {
-      background: transparent; color: var(--on-dark); border: 1px solid var(--on-dark);
-    }
-    .btn-outline-dark:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
-    .btn:disabled {
-      background: var(--surface-soft); color: var(--ash); border-color: var(--hairline); cursor: not-allowed;
-    }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-bright); }
+    .btn-primary:active:not(:disabled) { background: var(--primary-dark); }
+    .btn-outline { background: var(--soft-bg); color: var(--text); border: 1px solid var(--border-strong); }
+    .btn-outline:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-    /* ---------- Result Boxes (Success / Error) ---------- */
-    .result-box {
-      margin-top: 20px; padding: 18px; border-radius: var(--radius-sm);
-    }
-    .result-box.is-ok {
-      background: var(--success-bg); border: 1px solid var(--primary); border-left: 5px solid var(--primary); color: var(--ink);
-    }
-    .result-box.is-err {
-      background: var(--error-bg); border: 1px solid var(--error); border-left: 5px solid var(--error); color: var(--error-deep);
-    }
+    /* ---------- Result Boxes ---------- */
+    .result-box { margin-top: 20px; padding: 18px; border-radius: var(--radius); }
+    .result-box.is-ok { background: var(--ok-bg); border: 1px solid var(--primary); border-left: 5px solid var(--primary); color: var(--text); }
+    .result-box.is-err { background: var(--error-bg); border: 1px solid var(--error); border-left: 5px solid var(--error); color: var(--error-text); }
     .result-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-    .result-box.is-ok .result-title { color: var(--success-deep); }
-    .result-box.is-err .result-title { color: var(--error-deep); }
+    .result-box.is-ok .result-title { color: var(--ok-text); }
+    .result-box.is-err .result-title { color: var(--error-text); }
     .result-summary { font-size: 16px; font-weight: 700; margin-bottom: 8px; font-variant-numeric: tabular-nums; }
     .result-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
     .result-lines li {
-      padding: 8px 12px; background: var(--canvas); border: 1px solid var(--hairline); border-radius: var(--radius-sm);
-      font-size: 15px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums;
+      padding: 8px 12px; background: var(--card-solid); border: 1px solid var(--border); border-radius: 4px;
+      font-size: 15px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums;
     }
 
     /* ---------- Recent 8 Dispense Log Table ---------- */
-    .recent-section { margin-top: 32px; }
-    .table-wrap { overflow: auto; border: 1px solid var(--hairline); border-radius: var(--radius-sm); }
-    table { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 16px; background: var(--canvas); }
+    .recent-section { margin-top: 28px; }
+    .table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card-solid); }
+    table { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 16px; }
     thead th {
-      background: var(--surface-soft); color: var(--ink); font-weight: 700; font-size: 15px; text-align: left;
-      padding: 12px 12px; border-bottom: 2px solid var(--ink); white-space: nowrap;
+      background: var(--soft-bg); color: var(--text); font-weight: 700; font-size: 15px; text-align: left;
+      padding: 12px 12px; border-bottom: 2px solid var(--border-strong); white-space: nowrap;
     }
-    tbody td { padding: 11px 12px; border-bottom: 1px solid var(--hairline); vertical-align: top; color: var(--body); }
+    tbody td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--body); }
     tbody tr:last-child td { border-bottom: 0; }
-    tbody tr:hover td { background: var(--surface-soft); }
+    tbody tr:hover td { background: var(--row-hover); }
     th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-    td.code { font-weight: 700; color: var(--ink); white-space: nowrap; }
+    td.code { font-weight: 700; color: var(--text); white-space: nowrap; }
     td.nowrap { white-space: nowrap; }
     .type-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 2px 10px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700;
-      border: 1px solid var(--hairline-strong); background: var(--surface-soft); color: var(--ink); white-space: nowrap;
+      padding: 2px 10px; border-radius: 4px; font-size: 14px; font-weight: 700;
+      border: 1px solid var(--border-strong); background: var(--soft-bg); color: var(--text); white-space: nowrap;
     }
-    .type-badge.t-dispense { border-color: var(--primary); background: var(--success-bg); color: var(--success-deep); }
-    .type-badge.t-return { border-color: var(--link-blue); background: #eef4fc; color: var(--link-blue); }
-    .type-badge.t-void { border-style: dashed; border-color: var(--stone); background: var(--canvas); color: var(--mute); }
+    .type-badge.t-dispense { border-color: var(--primary); background: var(--ok-bg); color: var(--ok-text); }
+    .type-badge.t-return { border-color: var(--cyan); background: var(--ret-bg); color: var(--ret-text); }
+    .type-badge.t-void { border-style: dashed; border-color: var(--stone); background: transparent; color: var(--mute); }
 
-    /* ---------- Dark Footer Chapter ---------- */
-    footer { background: var(--surface-dark); color: var(--on-dark-mute); margin-top: auto; }
+    /* ---------- Footer ---------- */
+    footer { background: var(--footer-bg); color: var(--mute); border-top: 1px solid var(--border); backdrop-filter: blur(12px); margin-top: auto; }
     .footer-inner {
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
-      gap: 12px 24px; padding-block: 28px; border-bottom: 1px solid var(--hairline-strong); font-size: 14px;
+      gap: 12px 24px; padding-block: 24px; border-bottom: 1px solid var(--border); font-size: 14px;
     }
     .footer-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-    .footer-links a { color: var(--on-dark-mute); text-decoration: none; font-weight: 700; }
+    .footer-links a { color: var(--mute); text-decoration: none; font-weight: 700; }
     .footer-links a:hover { color: var(--primary); text-decoration: underline; }
-    .footer-legal { background: var(--surface-elevated); padding-block: 14px; }
+    .footer-legal { background: var(--footer-bar); padding-block: 14px; }
     .footer-legal-inner {
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px;
-      color: var(--mute); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--mute); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
     }
 
     @media (max-width: 920px) {
@@ -329,198 +361,473 @@
   </style>
 </head>
 <body>
-  <div class="utility-bar">
-    <div class="container utility-inner">
-      <span class="utility-tag">PHARMACY WORKSHOP</span>
-      <span>COUNTER POS · FEFO AUTO-DEDUCTION</span>
-    </div>
-  </div>
+  <canvas id="cosmos-bg" aria-hidden="true"></canvas>
 
-  <header class="primary-nav">
-    <div class="container nav-inner">
-      <a class="brand" href="./index.html"><span class="brand-square" aria-hidden="true"></span>คลังข้อมูลยา</a>
-      <nav class="nav-links" aria-label="เมนูนำทาง">
-        <a href="./index.html">หน้าแรก</a>
-        <a href="./pos.html" aria-current="page">หน้าขายยา</a>
-        <a href="./admin.html">จัดการระบบ</a>
-        <a href="./dashboard.html">Dashboard คลังยา</a>
-        <a href="./status.html">ตรวจสถานะระบบ</a>
-      </nav>
-    </div>
-  </header>
-
-  <div class="breadcrumb-bar" aria-label="ตำแหน่งปัจจุบัน">
-    <div class="container breadcrumb-inner">
-      <div class="breadcrumb-trail">
-        <a href="./index.html">หน้าแรก</a>
-        <span class="crumb-sep" aria-hidden="true">/</span>
-        <span>หน้าขายยา (POS)</span>
+  <div class="page-layer">
+    <div class="utility-bar">
+      <div class="container utility-inner">
+        <span class="utility-tag">COSMIC PHARMACY OS</span>
+        <span>COUNTER POS · FEFO AUTO-DEDUCTION</span>
       </div>
-      <span class="breadcrumb-note">ข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
     </div>
-  </div>
 
-  <section class="hero-band">
-    <div class="container hero-inner">
-      <div class="hero-copy">
-        <div class="eyebrow">COUNTER DISPENSING</div>
-        <h1>หน้าขายยาและบันทึกการจ่าย</h1>
-        <p>เลือกยาที่พร้อมจ่าย กรอกจำนวน รหัสผู้ป่วย และรหัสเภสัชกร — ระบบตัดล็อตแบบหมดอายุก่อนจ่ายก่อน (FEFO) ที่เซิร์ฟเวอร์โดยอัตโนมัติ</p>
-      </div>
-      <div class="hero-meta">
-        <div class="meta-item">
-          <span class="meta-label">วันอ้างอิง (as_of)</span>
-          <span class="meta-value" id="asof-display">กำลังโหลด…</span>
+    <header class="primary-nav">
+      <div class="container nav-inner">
+        <a class="brand" href="./index.html"><span class="brand-square" aria-hidden="true"></span>คลังข้อมูลยา</a>
+        <div class="nav-right">
+          <nav class="nav-links" aria-label="เมนูนำทาง">
+            <a href="./index.html">หน้าแรก</a>
+            <a href="./pos.html" aria-current="page">หน้าขายยา</a>
+            <a href="./admin.html">จัดการระบบ</a>
+            <a href="./dashboard.html">Dashboard คลังยา</a>
+            <a href="./status.html">ตรวจสถานะระบบ</a>
+          </nav>
+          <button type="button" class="theme-toggle" id="theme-toggle" aria-label="สลับโหมดสว่างหรือโหมดมืด"></button>
         </div>
-        <div class="meta-divider" aria-hidden="true"></div>
-        <div class="meta-item">
-          <span class="meta-label">ยาพร้อมจ่าย</span>
-          <span class="meta-value" id="ready-count">—</span>
+      </div>
+    </header>
+
+    <div class="breadcrumb-bar" aria-label="ตำแหน่งปัจจุบัน">
+      <div class="container breadcrumb-inner">
+        <div class="breadcrumb-trail">
+          <a href="./index.html">หน้าแรก</a>
+          <span class="crumb-sep" aria-hidden="true">/</span>
+          <span>หน้าขายยา (POS)</span>
         </div>
-        <button type="button" class="btn btn-outline-dark" id="refresh-btn">รีเฟรชข้อมูล</button>
+        <span class="breadcrumb-note">ข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
       </div>
     </div>
-  </section>
 
-  <main>
-    <div class="container">
-      <p class="notice-bar" role="note">ข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง · ใช้รหัสแฝงผู้ป่วย (เช่น PT-0001) เท่านั้น</p>
-
-      <!-- แถบสีเหลืองแสดงเมื่อโหลดจากไฟล์สำรองแทน /api/data -->
-      <div class="fallback-banner" id="fallback-banner" role="alert" hidden>
-        <div>
-          <strong>ข้อมูลสำรอง</strong>
-          <p id="fallback-detail">ไม่สามารถเชื่อมต่อ /api/data ได้ กำลังแสดงข้อมูลจากไฟล์สำรองและปิดการบันทึกการจ่ายยาชั่วคราว</p>
+    <section class="hero-band">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <div class="eyebrow">COUNTER DISPENSING</div>
+          <h1>หน้าขายยาและบันทึกการจ่าย</h1>
+          <p>เลือกยาที่พร้อมจ่าย กรอกจำนวน รหัสผู้ป่วย และรหัสเภสัชกร — ระบบตัดล็อตแบบหมดอายุก่อนจ่ายก่อน (FEFO) ที่เซิร์ฟเวอร์โดยอัตโนมัติ</p>
         </div>
-        <button type="button" class="btn btn-outline" id="retry-live-btn">ลองเชื่อมต่อใหม่</button>
+        <div class="hero-meta">
+          <div class="meta-item">
+            <span class="meta-label">วันอ้างอิง (as_of)</span>
+            <span class="meta-value" id="asof-display">กำลังโหลด…</span>
+          </div>
+          <div class="meta-divider" aria-hidden="true"></div>
+          <div class="meta-item">
+            <span class="meta-label">ยาพร้อมจ่าย</span>
+            <span class="meta-value" id="ready-count">—</span>
+          </div>
+          <button type="button" class="btn btn-outline" id="refresh-btn">รีเฟรชข้อมูล</button>
+        </div>
       </div>
+    </section>
 
-      <div class="load-error" id="load-error" role="alert" hidden></div>
-      <p class="loading-state" id="loading-state" role="status">กำลังโหลดรายการยาและสต็อกจากระบบ…</p>
+    <main>
+      <div class="container">
+        <p class="notice-bar" role="note">ข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง · ใช้รหัสแฝงผู้ป่วย (เช่น PT-0001) เท่านั้น</p>
 
-      <div id="pos-app" hidden>
-        <div class="pos-grid">
-          <!-- ฝั่งซ้าย: ค้นหาและเลือกยา -->
-          <section class="card" aria-labelledby="picker-title">
-            <div class="card-head">
-              <h2 id="picker-title">1. เลือกยาที่พร้อมจ่าย</h2>
-              <span class="card-count" id="picker-count"></span>
-            </div>
+        <!-- แถบสีเหลืองแสดงเมื่อโหลดจากไฟล์สำรองแทน /api/data -->
+        <div class="fallback-banner" id="fallback-banner" role="alert" hidden>
+          <div>
+            <strong>ข้อมูลสำรอง</strong>
+            <p id="fallback-detail">ไม่สามารถเชื่อมต่อ /api/data ได้ กำลังแสดงข้อมูลจากไฟล์สำรองและปิดการบันทึกการจ่ายยาชั่วคราว</p>
+          </div>
+          <button type="button" class="btn btn-outline" id="retry-live-btn">ลองเชื่อมต่อใหม่</button>
+        </div>
 
-            <div class="field">
-              <label for="drug-search">ค้นหายา (รหัสยา / ชื่อสามัญ / หมวด)</label>
-              <input id="drug-search" type="search" placeholder="เช่น AMOX500, IBU400, Paracetamol" autocomplete="off">
-            </div>
+        <div class="load-error" id="load-error" role="alert" hidden></div>
+        <p class="loading-state" id="loading-state" role="status">กำลังโหลดรายการยาและสต็อกจากระบบ…</p>
 
-            <div class="field">
-              <label for="drug-select">รายการยาที่มียอดใช้ได้</label>
-              <select id="drug-select"></select>
-            </div>
-
-            <ul class="drug-list" id="drug-list" aria-label="รายการยาที่มียอดใช้ได้"></ul>
-          </section>
-
-          <!-- ฝั่งขวา: ข้อมูลยาที่เลือก + ฟอร์มบันทึกการจ่ายยา -->
-          <section class="card" aria-labelledby="sell-title">
-            <div class="card-head">
-              <h2 id="sell-title">2. บันทึกการจ่ายยา</h2>
-              <span class="card-count" id="mode-tag">เชื่อมต่อ Supabase</span>
-            </div>
-
-            <div class="selected-box" id="selected-box">
-              <div>
-                <div class="selected-sku" id="sel-sku">—</div>
-                <div class="selected-name" id="sel-name">กรุณาเลือกยา</div>
-                <div class="selected-meta" id="sel-meta"></div>
-                <div id="sel-badge-wrap" style="margin-top:8px;"></div>
+        <div id="pos-app" hidden>
+          <div class="pos-grid">
+            <!-- ฝั่งซ้าย: ค้นหาและเลือกยา -->
+            <section class="card" aria-labelledby="picker-title">
+              <div class="card-head">
+                <h2 id="picker-title">1. เลือกยาที่พร้อมจ่าย</h2>
+                <span class="card-count" id="picker-count"></span>
               </div>
-              <div class="selected-stat">
-                <div class="selected-stat-label">ยอดใช้ได้รวม</div>
-                <div class="selected-stat-value" id="sel-usable">—</div>
-                <div class="selected-stat-unit" id="sel-unit"></div>
-              </div>
-            </div>
 
-            <form id="sell-form" autocomplete="off" novalidate>
               <div class="field">
-                <label for="qty-input">จำนวนที่จ่าย</label>
-                <!-- ไม่ใส่ max เพื่อไม่จำกัดเกินยอดใช้ได้ที่หน้าเว็บ ให้เซิร์ฟเวอร์เป็นผู้ตรวจสอบและตอบข้อความปฏิเสธ -->
-                <input id="qty-input" type="number" min="1" step="1" inputmode="numeric" placeholder="กรอกจำนวนเต็มตั้งแต่ 1 ขึ้นไป">
-                <span class="field-hint">ระบบไม่ให้เลือกล็อตเอง — เซิร์ฟเวอร์จะตัดล็อตที่หมดอายุก่อนอัตโนมัติ (FEFO)</span>
+                <label for="drug-search">ค้นหายา (รหัสยา / ชื่อสามัญ / หมวด)</label>
+                <input id="drug-search" type="search" placeholder="เช่น AMOX500, IBU400, Paracetamol" autocomplete="off">
               </div>
 
-              <div class="form-row">
-                <div class="field">
-                  <label for="patient-code">รหัสผู้ป่วย (patient_code)</label>
-                  <input id="patient-code" type="text" placeholder="เช่น PT-0001" spellcheck="false">
-                  <span class="field-hint">ข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
+              <div class="field">
+                <label for="drug-select">รายการยาที่มียอดใช้ได้</label>
+                <select id="drug-select"></select>
+              </div>
+
+              <ul class="drug-list" id="drug-list" aria-label="รายการยาที่มียอดใช้ได้"></ul>
+            </section>
+
+            <!-- ฝั่งขวา: ข้อมูลยาที่เลือก + ฟอร์มบันทึกการจ่ายยา -->
+            <section class="card" aria-labelledby="sell-title">
+              <div class="card-head">
+                <h2 id="sell-title">2. บันทึกการจ่ายยา</h2>
+                <span class="card-count" id="mode-tag">เชื่อมต่อ Supabase</span>
+              </div>
+
+              <div class="selected-box" id="selected-box">
+                <div>
+                  <div class="selected-sku" id="sel-sku">—</div>
+                  <div class="selected-name" id="sel-name">กรุณาเลือกยา</div>
+                  <div class="selected-meta" id="sel-meta"></div>
+                  <div id="sel-badge-wrap" style="margin-top:8px;"></div>
                 </div>
-                <div class="field">
-                  <label for="pharmacist-code">รหัสเภสัชกร (pharmacist_code)</label>
-                  <input id="pharmacist-code" type="text" placeholder="เช่น RX-01" spellcheck="false">
+                <div class="selected-stat">
+                  <div class="selected-stat-label">ยอดใช้ได้รวม</div>
+                  <div class="selected-stat-value" id="sel-usable">—</div>
+                  <div class="selected-stat-unit" id="sel-unit"></div>
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-primary" id="sell-btn">บันทึกการจ่ายยา</button>
-            </form>
+              <form id="sell-form" autocomplete="off" novalidate>
+                <div class="field">
+                  <label for="qty-input">จำนวนที่จ่าย</label>
+                  <!-- ไม่ใส่ max เพื่อไม่จำกัดเกินยอดใช้ได้ที่หน้าเว็บ ให้เซิร์ฟเวอร์เป็นผู้ตรวจสอบและตอบข้อความปฏิเสธ -->
+                  <input id="qty-input" type="number" min="1" step="1" inputmode="numeric" placeholder="กรอกจำนวนเต็มตั้งแต่ 1 ขึ้นไป">
+                  <span class="field-hint">ระบบไม่ให้เลือกล็อตเอง — เซิร์ฟเวอร์จะตัดล็อตที่หมดอายุก่อนอัตโนมัติ (FEFO)</span>
+                </div>
 
-            <!-- กล่องแสดงผลการจ่ายยา (สำเร็จหรือข้อผิดพลาดจากเซิร์ฟเวอร์) -->
-            <div id="result-box" class="result-box" role="status" aria-live="polite" hidden></div>
+                <div class="form-row">
+                  <div class="field">
+                    <label for="patient-code">รหัสผู้ป่วย (patient_code)</label>
+                    <input id="patient-code" type="text" placeholder="เช่น PT-0001" spellcheck="false">
+                    <span class="field-hint">ข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
+                  </div>
+                  <div class="field">
+                    <label for="pharmacist-code">รหัสเภสัชกร (pharmacist_code)</label>
+                    <input id="pharmacist-code" type="text" placeholder="เช่น RX-01" spellcheck="false">
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="sell-btn">บันทึกการจ่ายยา</button>
+              </form>
+
+              <!-- กล่องแสดงผลการจ่ายยา (สำเร็จหรือข้อผิดพลาดจากเซิร์ฟเวอร์) -->
+              <div id="result-box" class="result-box" role="status" aria-live="polite" hidden></div>
+            </section>
+          </div>
+
+          <!-- ตารางรายการจ่ายล่าสุด 8 แถว -->
+          <section class="card recent-section" aria-labelledby="recent-title">
+            <div class="card-head">
+              <h2 id="recent-title">รายการจ่ายล่าสุด 8 รายการ</h2>
+              <span class="card-count" id="recent-count"></span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>เลขที่ใบจ่าย</th>
+                    <th>วันเวลา</th>
+                    <th>รหัสยา / ชื่อยา</th>
+                    <th>เลขล็อต</th>
+                    <th class="num">จำนวน</th>
+                    <th>รหัสผู้ป่วย</th>
+                    <th>รหัสเภสัชกร</th>
+                    <th>ประเภท</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-body"></tbody>
+              </table>
+            </div>
           </section>
         </div>
 
-        <!-- ตารางรายการจ่ายล่าสุด 8 แถว -->
-        <section class="card recent-section" aria-labelledby="recent-title">
-          <div class="card-head">
-            <h2 id="recent-title">รายการจ่ายล่าสุด 8 รายการ</h2>
-            <span class="card-count" id="recent-count"></span>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>เลขที่ใบจ่าย</th>
-                  <th>วันเวลา</th>
-                  <th>รหัสยา / ชื่อยา</th>
-                  <th>เลขล็อต</th>
-                  <th class="num">จำนวน</th>
-                  <th>รหัสผู้ป่วย</th>
-                  <th>รหัสเภสัชกร</th>
-                  <th>ประเภท</th>
-                </tr>
-              </thead>
-              <tbody id="recent-body"></tbody>
-            </table>
-          </div>
-        </section>
+        <noscript>
+          <p class="load-error">กรุณาเปิด JavaScript เพื่อใช้งานหน้าขายยา</p>
+        </noscript>
       </div>
+    </main>
 
-      <noscript>
-        <p class="load-error">กรุณาเปิด JavaScript เพื่อใช้งานหน้าขายยา</p>
-      </noscript>
-    </div>
-  </main>
-
-  <footer>
-    <div class="container footer-inner">
-      <span>ข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
-      <div class="footer-links">
-        <a href="./index.html">หน้าแรก</a>
-        <a href="./admin.html">จัดการระบบ</a>
-        <a href="./dashboard.html">Dashboard คลังยา</a>
-        <a href="./status.html">ตรวจสถานะระบบ</a>
+    <footer>
+      <div class="container footer-inner">
+        <span>ข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
+        <div class="footer-links">
+          <a href="./index.html">หน้าแรก</a>
+          <a href="./admin.html">จัดการระบบ</a>
+          <a href="./dashboard.html">Dashboard คลังยา</a>
+          <a href="./status.html">ตรวจสถานะระบบ</a>
+        </div>
       </div>
-    </div>
-    <div class="footer-legal">
-      <div class="container footer-legal-inner">
-        <span>WORKSHOP ระบบร้านยาจำลอง</span>
-        <span>DESIGN-NVIDIA SYSTEM · SUPABASE + VERCEL</span>
+      <div class="footer-legal">
+        <div class="container footer-legal-inner">
+          <span>WORKSHOP ระบบร้านยาจำลอง</span>
+          <span>COSMIC EDITION · SUPABASE + VERCEL</span>
+        </div>
       </div>
-    </div>
-  </footer>
+    </footer>
+  </div>
 
   <script>
     'use strict';
+
+    // =========================================================================
+    // โหมดมืด/โหมดสว่าง และแอนิเมชันจักรวาลเคลื่อนไหว (Canvas 3D Starfield)
+    // =========================================================================
+    function initThemeToggle() {
+      const btn = document.getElementById('theme-toggle');
+      const apply = (theme) => {
+        document.documentElement.setAttribute('data-theme', theme);
+        try { localStorage.setItem('pharmacy_theme', theme); } catch (e) {}
+        btn.textContent = theme === 'dark' ? '☀ โหมดสว่าง' : '☾ โหมดมืด';
+      };
+      const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+      apply(current);
+      btn.addEventListener('click', () => {
+        const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        apply(next);
+      });
+    }
+
+    function initCosmos() {
+      const canvas = document.getElementById('cosmos-bg');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let width = 0, height = 0, dpr = 1, pointerX = 0, pointerY = 0, smoothX = 0, smoothY = 0;
+      const stars = [];
+      const meteors = [];
+      const ships = [];
+      const darkPalette = ['#ffffff', '#e0f2fe', '#c7d2fe', '#fde68a', '#bef264'];
+      const lightPalette = ['#0284c7', '#4f46e5', '#65a30d', '#0ea5e9', '#6366f1'];
+
+      function initShips() {
+        ships.length = 0;
+        const w = Math.max(width, 800), h = Math.max(height, 600);
+        ships.push(
+          { kind: 'ufo',    x: w * 0.14, y: h * 0.22, vx: 0.62,  vy: 0,     sc: 1.0,  phase: 0.5, beam: true },
+          { kind: 'rocket', x: w * 0.84, y: h * 0.75, vx: -0.92, vy: -0.22, sc: 0.92, phase: 2.2 },
+          { kind: 'alien',  x: w * 0.88, y: h * 0.26, vx: -0.35, vy: 0,     sc: 0.9,  phase: 3.9 },
+          { kind: 'ufo',    x: w * 0.58, y: h * 0.86, vx: -0.46, vy: 0,     sc: 0.72, phase: 1.4, beam: false }
+        );
+      }
+
+      function drawPlanet(x, y, r, isLight) {
+        ctx.save(); ctx.translate(x, y); ctx.globalAlpha = isLight ? 0.34 : 0.46;
+        const bg = ctx.createRadialGradient(-r * 0.35, -r * 0.35, r * 0.1, 0, 0, r);
+        bg.addColorStop(0, isLight ? '#93c5fd' : '#818cf8');
+        bg.addColorStop(0.65, isLight ? '#6366f1' : '#312e81');
+        bg.addColorStop(1, isLight ? '#312e81' : '#0f172a');
+        ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = isLight ? '#0284c7' : '#a3e635'; ctx.lineWidth = 2.2;
+        ctx.beginPath(); ctx.ellipse(0, 0, r * 2.05, r * 0.46, -0.26, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawUfo(x, y, sc, t, phase, isLight, hasBeam) {
+        ctx.save(); ctx.translate(x, y + Math.sin(t * 2.1 + phase) * 8); ctx.scale(sc, sc);
+        ctx.rotate(Math.sin(t * 1.4 + phase) * 0.08); ctx.globalAlpha = isLight ? 0.62 : 0.82;
+        if (hasBeam) {
+          const ba = (isLight ? 0.14 : 0.22) * (0.65 + 0.35 * Math.sin(t * 3 + phase));
+          const bg = ctx.createLinearGradient(0, 6, 0, 68);
+          bg.addColorStop(0, 'rgba(132, 204, 22, ' + ba + ')'); bg.addColorStop(1, 'rgba(132, 204, 22, 0)');
+          ctx.fillStyle = bg; ctx.beginPath(); ctx.moveTo(-12, 8); ctx.lineTo(12, 8); ctx.lineTo(28, 68); ctx.lineTo(-28, 68); ctx.closePath(); ctx.fill();
+        }
+        ctx.fillStyle = isLight ? 'rgba(56, 189, 248, 0.35)' : 'rgba(125, 211, 252, 0.28)';
+        ctx.strokeStyle = isLight ? '#0284c7' : '#7dd3fc'; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.arc(0, -3, 15, Math.PI, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#84cc16'; ctx.beginPath(); ctx.ellipse(0, -9, 5.5, 6.5, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath(); ctx.ellipse(-2.1, -9.2, 1.4, 2.2, -0.25, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(2.1, -9.2, 1.4, 2.2, 0.25, 0, Math.PI * 2); ctx.fill();
+        const hull = ctx.createLinearGradient(0, -6, 0, 11);
+        hull.addColorStop(0, isLight ? '#64748b' : '#cbd5e1'); hull.addColorStop(0.55, isLight ? '#334155' : '#475569'); hull.addColorStop(1, '#1e293b');
+        ctx.fillStyle = hull; ctx.beginPath(); ctx.ellipse(0, 2, 30, 9.5, 0, 0, Math.PI * 2); ctx.fill();
+        const lights = ['#a3e635', '#38bdf8', '#fde047', '#c084fc', '#a3e635'];
+        for (let i = 0; i < 5; i++) {
+          const lx = -18 + i * 9, ly = 2.5 + Math.cos((i - 2) * 0.65) * 1.4;
+          ctx.fillStyle = lights[i]; ctx.globalAlpha = (isLight ? 0.6 : 0.95) * (0.5 + 0.5 * Math.sin(t * 6 + i * 1.3 + phase));
+          ctx.beginPath(); ctx.arc(lx, ly, 2.1, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      function drawRocket(x, y, sc, vx, vy, t, phase, isLight) {
+        ctx.save(); ctx.translate(x, y); ctx.rotate(Math.atan2(vy, vx)); ctx.scale(sc, sc);
+        ctx.globalAlpha = isLight ? 0.6 : 0.82;
+        const flick = 1 + 0.25 * Math.sin(t * 28 + phase);
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.75)';
+        ctx.beginPath(); ctx.moveTo(-20, -4.5); ctx.lineTo(-20 - 18 * flick, 0); ctx.lineTo(-20, 4.5); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#a3e635';
+        ctx.beginPath(); ctx.moveTo(-20, -2.6); ctx.lineTo(-20 - 11 * flick, 0); ctx.lineTo(-20, 2.6); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = isLight ? '#4d7c0f' : '#84cc16';
+        ctx.beginPath();
+        ctx.moveTo(-18, -6); ctx.lineTo(-24, -15); ctx.lineTo(-8, -7); ctx.closePath();
+        ctx.moveTo(-18, 6); ctx.lineTo(-24, 15); ctx.lineTo(-8, 7); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = isLight ? '#334155' : '#e2e8f0';
+        ctx.beginPath(); ctx.moveTo(26, 0); ctx.quadraticCurveTo(10, -10, -20, -6.5); ctx.lineTo(-20, 6.5); ctx.quadraticCurveTo(10, 10, 26, 0); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#84cc16';
+        ctx.beginPath(); ctx.moveTo(26, 0); ctx.quadraticCurveTo(18, -5.2, 13, -5.8); ctx.lineTo(13, 5.8); ctx.quadraticCurveTo(18, 5.2, 26, 0); ctx.fill();
+        ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.arc(2, 0, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(3.2, -1.2, 1.3, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+
+      function drawAlienFloat(x, y, sc, t, phase, isLight) {
+        ctx.save(); ctx.translate(x, y + Math.sin(t * 1.7 + phase) * 11); ctx.rotate(Math.sin(t * 1.1 + phase) * 0.14);
+        ctx.scale(sc, sc); ctx.globalAlpha = isLight ? 0.62 : 0.82;
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.45)'; ctx.beginPath(); ctx.arc(11, 10, 4 + Math.sin(t * 12 + phase) * 1.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = isLight ? '#475569' : '#94a3b8'; ctx.beginPath(); ctx.rect(-7, 5, 14, 15); ctx.fill();
+        ctx.fillStyle = '#38bdf8'; ctx.fillRect(-3.5, 9, 7, 4);
+        ctx.strokeStyle = '#84cc16'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(-7, 9); ctx.lineTo(-14, 3 + Math.sin(t * 5 + phase) * 3); ctx.moveTo(7, 9); ctx.lineTo(13, 13); ctx.stroke();
+        ctx.strokeStyle = '#a3e635'; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.moveTo(-4, -12); ctx.lineTo(-8, -20); ctx.moveTo(4, -12); ctx.lineTo(8, -20); ctx.stroke();
+        ctx.fillStyle = '#a3e635'; ctx.beginPath(); ctx.arc(-8, -20.5, 2.2, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(8, -20.5, 2.2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#84cc16'; ctx.beginPath(); ctx.ellipse(0, -4, 9.5, 11, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.ellipse(-3.6, -4.5, 2.4, 3.6, -0.3, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(3.6, -4.5, 2.4, 3.6, 0.3, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(-4.2, -5.6, 0.9, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(3, -5.6, 0.9, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = isLight ? 'rgba(2, 132, 199, 0.55)' : 'rgba(186, 230, 253, 0.6)'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(0, -5, 14.5, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
+
+      function resetStar(star, randomZ) {
+        star.x = (Math.random() - 0.5) * 1800;
+        star.y = (Math.random() - 0.5) * 1100;
+        star.z = randomZ ? Math.random() * 1400 + 80 : 1480;
+        star.pz = star.z;
+        star.size = Math.random() * 1.5 + 0.6;
+        star.colorIndex = Math.floor(Math.random() * darkPalette.length);
+        star.phase = Math.random() * Math.PI * 2;
+      }
+      for (let i = 0; i < 180; i++) { const s = {}; resetStar(s, true); stars.push(s); }
+
+      function spawnMeteor() {
+        if (meteors.length >= 2) return;
+        meteors.push({
+          x: Math.random() * width * 0.8 + width * 0.1,
+          y: Math.random() * height * 0.35,
+          vx: (Math.random() * 6 + 7) * (Math.random() < 0.5 ? 1 : -1),
+          vy: Math.random() * 3.5 + 3.5,
+          life: 0,
+          maxLife: 42 + Math.random() * 24,
+        });
+      }
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      window.addEventListener('resize', resize);
+      window.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        pointerX = (e.clientX / Math.max(1, width) - 0.5) * 60;
+        pointerY = (e.clientY / Math.max(1, height) - 0.5) * 40;
+      });
+      resize();
+      initShips();
+
+      function render(now) {
+        const t = now * 0.001;
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        ctx.clearRect(0, 0, width, height);
+        smoothX += (pointerX - smoothX) * 0.04;
+        smoothY += (pointerY - smoothY) * 0.04;
+
+        const nebulae = isLight
+          ? [
+              { x: width * (0.2 + Math.sin(t * 0.14) * 0.07), y: height * (0.24 + Math.cos(t * 0.11) * 0.06), r: Math.max(width, height) * 0.42, c: 'rgba(56, 189, 248, 0.15)' },
+              { x: width * (0.8 + Math.cos(t * 0.12) * 0.06), y: height * (0.3 + Math.sin(t * 0.15) * 0.06), r: Math.max(width, height) * 0.38, c: 'rgba(129, 140, 248, 0.13)' },
+              { x: width * (0.52 + Math.sin(t * 0.1) * 0.08), y: height * (0.82 + Math.cos(t * 0.13) * 0.05), r: Math.max(width, height) * 0.36, c: 'rgba(118, 185, 0, 0.11)' },
+            ]
+          : [
+              { x: width * (0.18 + Math.sin(t * 0.14) * 0.07), y: height * (0.22 + Math.cos(t * 0.11) * 0.06), r: Math.max(width, height) * 0.44, c: 'rgba(56, 189, 248, 0.12)' },
+              { x: width * (0.82 + Math.cos(t * 0.12) * 0.06), y: height * (0.34 + Math.sin(t * 0.15) * 0.06), r: Math.max(width, height) * 0.4, c: 'rgba(139, 92, 246, 0.13)' },
+              { x: width * (0.5 + Math.sin(t * 0.1) * 0.08), y: height * (0.84 + Math.cos(t * 0.13) * 0.05), r: Math.max(width, height) * 0.38, c: 'rgba(132, 204, 22, 0.1)' },
+            ];
+        for (const n of nebulae) {
+          const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+          grad.addColorStop(0, n.c);
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, width, height);
+        }
+
+        const cx = width * 0.5 - smoothX;
+        const cy = height * 0.46 - smoothY;
+        const speed = reduced ? 0 : 2.1;
+        const palette = isLight ? lightPalette : darkPalette;
+
+        for (const s of stars) {
+          s.pz = s.z;
+          s.z -= speed;
+          if (s.z <= 24) resetStar(s, false);
+          const f = 520 / s.z;
+          const sx = cx + s.x * f;
+          const sy = cy + s.y * f;
+          if (sx < -40 || sx > width + 40 || sy < -40 || sy > height + 40) continue;
+          const pf = 520 / s.pz;
+          const px = cx + s.x * pf;
+          const py = cy + s.y * pf;
+          const depth = Math.max(0, Math.min(1, 1 - s.z / 1480));
+          const twinkle = 0.65 + 0.35 * Math.sin(t * 2.2 + s.phase);
+          const alpha = (isLight ? 0.45 : 0.85) * depth * twinkle;
+          const radius = Math.max(0.5, s.size * (0.45 + depth * 1.5));
+
+          ctx.strokeStyle = palette[s.colorIndex];
+          ctx.fillStyle = palette[s.colorIndex];
+          ctx.globalAlpha = alpha * 0.5;
+          ctx.lineWidth = radius * 0.85;
+          ctx.beginPath();
+          ctx.moveTo(px, py);
+          ctx.lineTo(sx, sy);
+          ctx.stroke();
+
+          ctx.globalAlpha = alpha;
+          ctx.beginPath();
+          ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        drawPlanet(width * 0.89 - smoothX * 0.3, height * 0.16 - smoothY * 0.3, 24, isLight);
+        for (const sh of ships) {
+          if (!reduced) {
+            sh.x += sh.vx; sh.y += sh.vy;
+            if (sh.vx > 0 && sh.x > width + 110) { sh.x = -110; sh.y = height * (0.14 + Math.random() * 0.72); }
+            else if (sh.vx < 0 && sh.x < -110) { sh.x = width + 110; sh.y = height * (0.14 + Math.random() * 0.72); }
+            if (sh.y < -80) sh.y = height + 70;
+            else if (sh.y > height + 80) sh.y = -70;
+          }
+          const px = sh.x - smoothX * 0.45, py = sh.y - smoothY * 0.45;
+          if (sh.kind === 'ufo') drawUfo(px, py, sh.sc, t, sh.phase, isLight, sh.beam);
+          else if (sh.kind === 'rocket') drawRocket(px, py, sh.sc, sh.vx, sh.vy, t, sh.phase, isLight);
+          else drawAlienFloat(px, py, sh.sc, t, sh.phase, isLight);
+        }
+
+        if (!reduced && Math.random() < 0.007) spawnMeteor();
+        for (let i = meteors.length - 1; i >= 0; i--) {
+          const m = meteors[i];
+          m.x += m.vx;
+          m.y += m.vy;
+          m.life += 1;
+          const alpha = Math.sin((m.life / m.maxLife) * Math.PI) * (isLight ? 0.5 : 0.8);
+          const tailX = m.x - m.vx * 9;
+          const tailY = m.y - m.vy * 9;
+          const g = ctx.createLinearGradient(m.x, m.y, tailX, tailY);
+          g.addColorStop(0, isLight ? 'rgba(101, 163, 13, ' + alpha + ')' : 'rgba(255, 255, 255, ' + alpha + ')');
+          g.addColorStop(0.4, isLight ? 'rgba(2, 132, 199, ' + (alpha * 0.55) + ')' : 'rgba(163, 230, 53, ' + (alpha * 0.6) + ')');
+          g.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.globalAlpha = 1;
+          ctx.strokeStyle = g;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(m.x, m.y);
+          ctx.lineTo(tailX, tailY);
+          ctx.stroke();
+          if (m.life >= m.maxLife) meteors.splice(i, 1);
+        }
+
+        ctx.globalAlpha = 1;
+        if (!reduced) requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    }
 
     // =========================================================================
     // ค่าคงที่และสถานะของหน้าขายยา (ไม่มี key และไม่เรียก Supabase โดยตรง)
@@ -803,7 +1110,6 @@
         selectionChanged = true;
       }
 
-      // อัปเดต dropdown <select>
       const select = $('drug-select');
       const selectFrag = document.createDocumentFragment();
       if (!filtered.length) {
@@ -823,7 +1129,6 @@
         select.value = state.selectedSku;
       }
 
-      // อัปเดตรายการการ์ดสำหรับกดเลือกบนแท็บเล็ต
       const list = $('drug-list');
       const listFrag = document.createDocumentFragment();
       if (!filtered.length) {
@@ -974,7 +1279,6 @@
       btn.textContent = 'บันทึกการจ่ายยา';
     }
 
-    // แสดงผลสำเร็จตามข้อมูลที่เซิร์ฟเวอร์ตอบกลับโดยไม่คำนวณยอดใหม่เอง
     function showSuccessResult(sku, unit, data) {
       const box = $('result-box');
       box.className = 'result-box is-ok';
@@ -999,7 +1303,6 @@
       box.replaceChildren(frag);
     }
 
-    // แสดงข้อความผิดพลาดจากเซิร์ฟเวอร์ในกล่องสีแดงโดยไม่ล้างฟอร์ม
     function showErrorResult(message) {
       const box = $('result-box');
       box.className = 'result-box is-err';
@@ -1024,8 +1327,6 @@
       const patientCode = $('patient-code').value.trim();
       const pharmacistCode = $('pharmacist-code').value.trim();
 
-      // ตรวจสอบเฉพาะฝั่งหน้าเว็บตามกติกา: จำนวนเป็นจำนวนเต็ม >= 1 และรหัสทั้งสองไม่ว่าง
-      // ห้ามจำกัดจำนวนไม่ให้เกินยอดใช้ได้ที่หน้าเว็บ ให้ส่งไปให้เซิร์ฟเวอร์ตัดสิน
       if (!sku) {
         showErrorResult('กรุณาเลือกยาที่ต้องการจ่าย');
         return;
@@ -1044,7 +1345,6 @@
       const selectedDrug = state.usableDrugs.find((d) => d.sku === sku);
       const unit = selectedDrug ? selectedDrug.unit : '';
 
-      // ปิดปุ่มขายทันทีจนกว่าจะได้คำตอบ ป้องกันการกดซ้ำ
       state.submitting = true;
       updateSellButtonState();
 
@@ -1061,15 +1361,12 @@
         }, API_TIMEOUT_MS);
 
         if (response.ok && data && data.ok === true) {
-          // แสดงผลตามที่ /api/dispense ตอบกลับมาโดยตรง (ล็อตที่ตัด และยอดก่อน–หลัง)
           showSuccessResult(sku, unit, data);
-          // ล้างช่องรหัสผู้ป่วยหลังจ่ายสำเร็จ (คงรหัสเภสัชกรไว้สำหรับรายการถัดไป)
           $('patient-code').value = '';
           $('qty-input').value = '';
           // ขั้นตอนที่ 3: ดึง /api/data ใหม่เพื่ออัปเดตยอดใช้ได้และรายการล่าสุดโดยไม่รีเฟรชหน้า
           await loadData(true);
         } else {
-          // ไม่สำเร็จ: แสดงข้อความภาษาไทยจาก message ของเซิร์ฟเวอร์ และไม่ล้างฟอร์ม
           const errMsg = (data && data.message)
             ? data.message
             : 'ไม่สามารถบันทึกการจ่ายยาได้ (HTTP ' + response.status + ')';
@@ -1086,9 +1383,6 @@
       }
     });
 
-    // =========================================================================
-    // Event listeners สำหรับค้นหา เลือกยา และรีเฟรช
-    // =========================================================================
     $('drug-search').addEventListener('input', () => {
       renderDrugPicker();
     });
@@ -1106,7 +1400,8 @@
     $('refresh-btn').addEventListener('click', () => loadData(false));
     $('retry-live-btn').addEventListener('click', () => loadData(false));
 
-    // เริ่มต้นโหลดข้อมูลจาก /api/data ทันทีเมื่อเปิดหน้า
+    initThemeToggle();
+    initCosmos();
     loadData(false);
   </script>
 </body>

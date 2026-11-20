@@ -695,8 +695,8 @@ function mountCharts() {
   const categories = new Map();
   for (const { row } of model.catalog) categories.set(row.category, (categories.get(row.category) ?? 0) + 1);
   const ranked = [...categories].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'th'));
-  const palette = ['#76b900', '#000000', '#5a8d00', '#0046a4', '#5e5e5e', '#df6500', '#952fc6', '#3f8500',
-    '#1a1a1a', '#757575', '#ef9100', '#4d1368', '#333333', '#e52020', '#898989', '#a7a7a7'];
+  const palette = ['#84cc16', '#38bdf8', '#a78bfa', '#f59e0b', '#34d399', '#f472b6', '#60a5fa', '#fb923c',
+    '#2dd4bf', '#c084fc', '#65a30d', '#fbbf24', '#818cf8', '#f87171', '#22d3ee', '#94a3b8'];
   const total = model.catalog.length;
   let end = 0;
   let hovered = '';
@@ -719,8 +719,8 @@ function mountCharts() {
     if (!total) return;
     const spans = slices.flatMap((slice) => {
       const stop = slice.end - Math.min(.75, (slice.end - slice.start) * .12);
-      const color = current && current !== slice ? slice.color + '60' : slice.color;
-      return [`${color} ${slice.start}deg ${stop}deg`, `white ${stop}deg ${slice.end}deg`];
+      const color = current && current !== slice ? slice.color + '55' : slice.color;
+      return [`${color} ${slice.start}deg ${stop}deg`, `transparent ${stop}deg ${slice.end}deg`];
     });
     ring.style.setProperty('--slices', `conic-gradient(${spans.join(',')})`);
   }
@@ -1170,4 +1170,253 @@ el('previous').addEventListener('click', () => { page -= 1; renderRecords(); });
 el('next').addEventListener('click', () => { page += 1; renderRecords(); });
 narrow.addEventListener('change', () => { if (model[view]) renderRecords(); });
 
+function initThemeToggle() {
+  const btn = el('theme-toggle');
+  if (!btn) return;
+  const apply = (theme) => {
+    document.documentElement.setAttribute('data-theme', theme);
+    try { localStorage.setItem('pharmacy_theme', theme); } catch {}
+    btn.textContent = theme === 'dark' ? '☀ โหมดสว่าง' : '☾ โหมดมืด';
+  };
+  apply(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+  btn.addEventListener('click', () => {
+    apply(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+  });
+}
+
+function initCosmos() {
+  const canvas = el('cosmos-bg');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  let width = 0, height = 0, dpr = 1, pointerX = 0, pointerY = 0, smoothX = 0, smoothY = 0;
+  const stars = [], meteors = [], ships = [];
+  const darkPalette = ['#ffffff', '#e0f2fe', '#c7d2fe', '#fde68a', '#bef264'];
+  const lightPalette = ['#0284c7', '#4f46e5', '#65a30d', '#0ea5e9', '#6366f1'];
+
+  function initShips() {
+    ships.length = 0;
+    const w = Math.max(width, 800), h = Math.max(height, 600);
+    ships.push(
+      { kind: 'ufo',    x: w * 0.14, y: h * 0.2,  vx: 0.64,  vy: 0,     sc: 1.02, phase: 0.4, beam: true },
+      { kind: 'rocket', x: w * 0.84, y: h * 0.72, vx: -0.92, vy: -0.22, sc: 0.94, phase: 2.1 },
+      { kind: 'alien',  x: w * 0.87, y: h * 0.27, vx: -0.36, vy: 0,     sc: 0.92, phase: 4.0 },
+      { kind: 'ufo',    x: w * 0.6,  y: h * 0.85, vx: -0.46, vy: 0,     sc: 0.74, phase: 1.4, beam: false }
+    );
+  }
+  function drawPlanet(x, y, r, isLight) {
+    ctx.save(); ctx.translate(x, y); ctx.globalAlpha = isLight ? 0.34 : 0.46;
+    const bg = ctx.createRadialGradient(-r * 0.35, -r * 0.35, r * 0.1, 0, 0, r);
+    bg.addColorStop(0, isLight ? '#93c5fd' : '#818cf8'); bg.addColorStop(0.65, isLight ? '#6366f1' : '#312e81'); bg.addColorStop(1, isLight ? '#312e81' : '#0f172a');
+    ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = isLight ? '#0284c7' : '#a3e635'; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.ellipse(0, 0, r * 2.05, r * 0.46, -0.26, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
+  function drawUfo(x, y, sc, t, phase, isLight, hasBeam) {
+    ctx.save(); ctx.translate(x, y + Math.sin(t * 2.1 + phase) * 8); ctx.scale(sc, sc);
+    ctx.rotate(Math.sin(t * 1.4 + phase) * 0.08); ctx.globalAlpha = isLight ? 0.62 : 0.84;
+    if (hasBeam) {
+      const ba = (isLight ? 0.14 : 0.22) * (0.65 + 0.35 * Math.sin(t * 3 + phase));
+      const bg = ctx.createLinearGradient(0, 6, 0, 68);
+      bg.addColorStop(0, `rgba(132, 204, 22, ${ba})`); bg.addColorStop(1, 'rgba(132, 204, 22, 0)');
+      ctx.fillStyle = bg; ctx.beginPath(); ctx.moveTo(-12, 8); ctx.lineTo(12, 8); ctx.lineTo(28, 68); ctx.lineTo(-28, 68); ctx.closePath(); ctx.fill();
+    }
+    ctx.fillStyle = isLight ? 'rgba(56, 189, 248, 0.35)' : 'rgba(125, 211, 252, 0.28)';
+    ctx.strokeStyle = isLight ? '#0284c7' : '#7dd3fc'; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(0, -3, 15, Math.PI, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#84cc16'; ctx.beginPath(); ctx.ellipse(0, -9, 5.5, 6.5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath(); ctx.ellipse(-2.1, -9.2, 1.4, 2.2, -0.25, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(2.1, -9.2, 1.4, 2.2, 0.25, 0, Math.PI * 2); ctx.fill();
+    const hull = ctx.createLinearGradient(0, -6, 0, 11);
+    hull.addColorStop(0, isLight ? '#64748b' : '#cbd5e1'); hull.addColorStop(0.55, isLight ? '#334155' : '#475569'); hull.addColorStop(1, '#1e293b');
+    ctx.fillStyle = hull; ctx.beginPath(); ctx.ellipse(0, 2, 30, 9.5, 0, 0, Math.PI * 2); ctx.fill();
+    const lights = ['#a3e635', '#38bdf8', '#fde047', '#c084fc', '#a3e635'];
+    for (let i = 0; i < 5; i++) {
+      const lx = -18 + i * 9, ly = 2.5 + Math.cos((i - 2) * 0.65) * 1.4;
+      ctx.fillStyle = lights[i]; ctx.globalAlpha = (isLight ? 0.6 : 0.95) * (0.5 + 0.5 * Math.sin(t * 6 + i * 1.3 + phase));
+      ctx.beginPath(); ctx.arc(lx, ly, 2.1, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawRocket(x, y, sc, vx, vy, t, phase, isLight) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(Math.atan2(vy, vx)); ctx.scale(sc, sc); ctx.globalAlpha = isLight ? 0.6 : 0.84;
+    const flick = 1 + 0.25 * Math.sin(t * 28 + phase);
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.75)'; ctx.beginPath(); ctx.moveTo(-20, -4.5); ctx.lineTo(-20 - 18 * flick, 0); ctx.lineTo(-20, 4.5); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#a3e635'; ctx.beginPath(); ctx.moveTo(-20, -2.6); ctx.lineTo(-20 - 11 * flick, 0); ctx.lineTo(-20, 2.6); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = isLight ? '#4d7c0f' : '#84cc16'; ctx.beginPath();
+    ctx.moveTo(-18, -6); ctx.lineTo(-24, -15); ctx.lineTo(-8, -7); ctx.closePath();
+    ctx.moveTo(-18, 6); ctx.lineTo(-24, 15); ctx.lineTo(-8, 7); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = isLight ? '#334155' : '#e2e8f0'; ctx.beginPath();
+    ctx.moveTo(26, 0); ctx.quadraticCurveTo(10, -10, -20, -6.5); ctx.lineTo(-20, 6.5); ctx.quadraticCurveTo(10, 10, 26, 0); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#84cc16'; ctx.beginPath(); ctx.moveTo(26, 0); ctx.quadraticCurveTo(18, -5.2, 13, -5.8); ctx.lineTo(13, 5.8); ctx.quadraticCurveTo(18, 5.2, 26, 0); ctx.fill();
+    ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.arc(2, 0, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(3.2, -1.2, 1.3, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawAlienFloat(x, y, sc, t, phase, isLight) {
+    ctx.save(); ctx.translate(x, y + Math.sin(t * 1.7 + phase) * 11); ctx.rotate(Math.sin(t * 1.1 + phase) * 0.14);
+    ctx.scale(sc, sc); ctx.globalAlpha = isLight ? 0.62 : 0.84;
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.45)'; ctx.beginPath(); ctx.arc(11, 10, 4 + Math.sin(t * 12 + phase) * 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = isLight ? '#475569' : '#94a3b8'; ctx.beginPath(); ctx.rect(-7, 5, 14, 15); ctx.fill();
+    ctx.fillStyle = '#38bdf8'; ctx.fillRect(-3.5, 9, 7, 4);
+    ctx.strokeStyle = '#84cc16'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-7, 9); ctx.lineTo(-14, 3 + Math.sin(t * 5 + phase) * 3); ctx.moveTo(7, 9); ctx.lineTo(13, 13); ctx.stroke();
+    ctx.strokeStyle = '#a3e635'; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(-4, -12); ctx.lineTo(-8, -20); ctx.moveTo(4, -12); ctx.lineTo(8, -20); ctx.stroke();
+    ctx.fillStyle = '#a3e635'; ctx.beginPath(); ctx.arc(-8, -20.5, 2.2, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(8, -20.5, 2.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#84cc16'; ctx.beginPath(); ctx.ellipse(0, -4, 9.5, 11, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.ellipse(-3.6, -4.5, 2.4, 3.6, -0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(3.6, -4.5, 2.4, 3.6, 0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(-4.2, -5.6, 0.9, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(3, -5.6, 0.9, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = isLight ? 'rgba(2, 132, 199, 0.55)' : 'rgba(186, 230, 253, 0.6)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(0, -5, 14.5, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
+
+  function resetStar(s, rnd) {
+    s.x = (Math.random() - 0.5) * 1800;
+    s.y = (Math.random() - 0.5) * 1100;
+    s.z = rnd ? Math.random() * 1400 + 80 : 1480;
+    s.pz = s.z;
+    s.size = Math.random() * 1.5 + 0.6;
+    s.ci = Math.floor(Math.random() * darkPalette.length);
+    s.phase = Math.random() * Math.PI * 2;
+  }
+  for (let i = 0; i < 180; i++) { const s = {}; resetStar(s, true); stars.push(s); }
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  window.addEventListener('pointermove', (event) => {
+    if (event.pointerType !== 'mouse') return;
+    pointerX = (event.clientX / Math.max(1, width) - 0.5) * 60;
+    pointerY = (event.clientY / Math.max(1, height) - 0.5) * 40;
+  });
+  resize();
+  initShips();
+
+  function render(now) {
+    const t = now * 0.001;
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    ctx.clearRect(0, 0, width, height);
+    smoothX += (pointerX - smoothX) * 0.04;
+    smoothY += (pointerY - smoothY) * 0.04;
+
+    const nebulae = isLight
+      ? [
+          { x: width * (0.2 + Math.sin(t * 0.14) * 0.07), y: height * (0.24 + Math.cos(t * 0.11) * 0.06), r: Math.max(width, height) * 0.42, c: 'rgba(56, 189, 248, 0.15)' },
+          { x: width * (0.8 + Math.cos(t * 0.12) * 0.06), y: height * (0.3 + Math.sin(t * 0.15) * 0.06), r: Math.max(width, height) * 0.38, c: 'rgba(129, 140, 248, 0.13)' },
+          { x: width * (0.52 + Math.sin(t * 0.1) * 0.08), y: height * (0.82 + Math.cos(t * 0.13) * 0.05), r: Math.max(width, height) * 0.36, c: 'rgba(118, 185, 0, 0.11)' },
+        ]
+      : [
+          { x: width * (0.18 + Math.sin(t * 0.14) * 0.07), y: height * (0.22 + Math.cos(t * 0.11) * 0.06), r: Math.max(width, height) * 0.44, c: 'rgba(56, 189, 248, 0.12)' },
+          { x: width * (0.82 + Math.cos(t * 0.12) * 0.06), y: height * (0.34 + Math.sin(t * 0.15) * 0.06), r: Math.max(width, height) * 0.4, c: 'rgba(139, 92, 246, 0.13)' },
+          { x: width * (0.5 + Math.sin(t * 0.1) * 0.08), y: height * (0.84 + Math.cos(t * 0.13) * 0.05), r: Math.max(width, height) * 0.38, c: 'rgba(132, 204, 22, 0.1)' },
+        ];
+    for (const n of nebulae) {
+      const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+      grad.addColorStop(0, n.c);
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    const cx = width * 0.5 - smoothX;
+    const cy = height * 0.46 - smoothY;
+    const speed = reducedMotion.matches ? 0 : 2.1;
+    const pal = isLight ? lightPalette : darkPalette;
+
+    for (const s of stars) {
+      s.pz = s.z;
+      s.z -= speed;
+      if (s.z <= 24) resetStar(s, false);
+      const f = 520 / s.z;
+      const sx = cx + s.x * f;
+      const sy = cy + s.y * f;
+      if (sx < -40 || sx > width + 40 || sy < -40 || sy > height + 40) continue;
+      const pf = 520 / s.pz;
+      const px = cx + s.x * pf;
+      const py = cy + s.y * pf;
+      const depth = Math.max(0, Math.min(1, 1 - s.z / 1480));
+      const alpha = (isLight ? 0.45 : 0.85) * depth * (0.65 + 0.35 * Math.sin(t * 2.2 + s.phase));
+      const radius = Math.max(0.5, s.size * (0.45 + depth * 1.5));
+
+      ctx.strokeStyle = pal[s.ci];
+      ctx.fillStyle = pal[s.ci];
+      ctx.globalAlpha = alpha * 0.5;
+      ctx.lineWidth = radius * 0.85;
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(sx, sy);
+      ctx.stroke();
+
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    drawPlanet(width * 0.89 - smoothX * 0.3, height * 0.16 - smoothY * 0.3, 25, isLight);
+    for (const sh of ships) {
+      if (!reducedMotion.matches) {
+        sh.x += sh.vx; sh.y += sh.vy;
+        if (sh.vx > 0 && sh.x > width + 110) { sh.x = -110; sh.y = height * (0.14 + Math.random() * 0.72); }
+        else if (sh.vx < 0 && sh.x < -110) { sh.x = width + 110; sh.y = height * (0.14 + Math.random() * 0.72); }
+        if (sh.y < -80) sh.y = height + 70;
+        else if (sh.y > height + 80) sh.y = -70;
+      }
+      const px = sh.x - smoothX * 0.45, py = sh.y - smoothY * 0.45;
+      if (sh.kind === 'ufo') drawUfo(px, py, sh.sc, t, sh.phase, isLight, sh.beam);
+      else if (sh.kind === 'rocket') drawRocket(px, py, sh.sc, sh.vx, sh.vy, t, sh.phase, isLight);
+      else drawAlienFloat(px, py, sh.sc, t, sh.phase, isLight);
+    }
+
+    if (!reducedMotion.matches && Math.random() < 0.007 && meteors.length < 2) {
+      meteors.push({
+        x: Math.random() * width * 0.8 + width * 0.1,
+        y: Math.random() * height * 0.35,
+        vx: (Math.random() * 6 + 7) * (Math.random() < 0.5 ? 1 : -1),
+        vy: Math.random() * 3.5 + 3.5,
+        life: 0,
+        maxLife: 42 + Math.random() * 24,
+      });
+    }
+    for (let i = meteors.length - 1; i >= 0; i--) {
+      const m = meteors[i];
+      m.x += m.vx;
+      m.y += m.vy;
+      m.life += 1;
+      const a = Math.sin((m.life / m.maxLife) * Math.PI) * (isLight ? 0.5 : 0.8);
+      const tx = m.x - m.vx * 9;
+      const ty = m.y - m.vy * 9;
+      const g = ctx.createLinearGradient(m.x, m.y, tx, ty);
+      g.addColorStop(0, isLight ? `rgba(101, 163, 13, ${a})` : `rgba(255, 255, 255, ${a})`);
+      g.addColorStop(0.4, isLight ? `rgba(2, 132, 199, ${a * 0.55})` : `rgba(163, 230, 53, ${a * 0.6})`);
+      g.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = g;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(m.x, m.y);
+      ctx.lineTo(tx, ty);
+      ctx.stroke();
+      if (m.life >= m.maxLife) meteors.splice(i, 1);
+    }
+
+    ctx.globalAlpha = 1;
+    if (!reducedMotion.matches) requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+}
+
+initThemeToggle();
+initCosmos();
 loadFromSupabase();

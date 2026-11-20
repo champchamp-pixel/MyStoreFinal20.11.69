@@ -1,244 +1,504 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ไฟสถานะระบบร้านยาจำลอง</title>
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('pharmacy_theme');
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    color-scheme: light;
-    --primary: #76b900;
-    --on-primary: #000000;
-    --primary-dark: #5a8d00;
-    --ink: #000000;
-    --canvas: #ffffff;
-    --surface-dark: #000000;
-    --surface-soft: #f7f7f7;
-    --surface-elevated: #1a1a1a;
-    --hairline: #cccccc;
-    --hairline-strong: #5e5e5e;
-    --body: #1a1a1a;
-    --mute: #757575;
-    --stone: #898989;
-    --ash: #a7a7a7;
-    --on-dark: #ffffff;
-    --on-dark-mute: rgba(255, 255, 255, 0.7);
-    --link-blue: #0046a4;
-    --ok: #3f8500;
-    --ok-bg: #eef7df;
-    --bad: #e52020;
-    --bad-deep: #650b0b;
-    --bad-bg: #fdecec;
-    --wait: #898989;
-    --wait-bg: #f7f7f7;
-    --warn: #df6500;
-    --warn-bg: #feeeb2;
-    --radius-sm: 2px;
+  :root, [data-theme="dark"] {
+    color-scheme: dark;
+    --primary: #84cc16;
+    --primary-bright: #a3e635;
+    --primary-dark: #65a30d;
+    --on-primary: #0b1305;
+    --cyan: #38bdf8;
+    --bg-base: #111827;
+    --bg-grad-1: #16213a;
+    --bg-grad-2: #0f172a;
+    --nav-bg: rgba(15, 23, 42, 0.85);
+    --utility-bg: rgba(11, 17, 32, 0.92);
+    --crumb-bg: rgba(20, 29, 47, 0.8);
+    --card-bg: rgba(24, 34, 54, 0.86);
+    --soft-bg: rgba(30, 41, 59, 0.85);
+    --input-bg: #1e293b;
+    --border: rgba(148, 163, 184, 0.24);
+    --border-strong: rgba(148, 163, 184, 0.42);
+    --text: #f8fafc;
+    --body: #e2e8f0;
+    --mute: #94a3b8;
+    --ok: #bef264;
+    --ok-bg: rgba(54, 83, 20, 0.4);
+    --bad: #f87171;
+    --bad-text: #fecaca;
+    --bad-bg: rgba(127, 29, 29, 0.42);
+    --wait: #94a3b8;
+    --wait-bg: rgba(51, 65, 85, 0.55);
+    --warn: #f59e0b;
+    --warn-text: #fde68a;
+    --warn-bg: rgba(120, 53, 15, 0.42);
+    --footer-bg: rgba(11, 17, 32, 0.9);
+    --footer-bar: rgba(15, 23, 42, 0.95);
+    --glow: 0 0 22px rgba(132, 204, 22, 0.18);
+    --card-shadow: 0 8px 32px rgba(2, 6, 23, 0.35);
+    --radius: 6px;
     --font: 'Inter', 'Noto Sans Thai', Arial, sans-serif;
   }
-  *, *::before, *::after { box-sizing: border-box; }
-  html { background: var(--surface-dark); }
-  body {
-    margin: 0; min-height: 100dvh; display: flex; flex-direction: column;
-    background: var(--canvas); color: var(--body);
-    font: 400 16px/1.5 var(--font);
+
+  [data-theme="light"] {
+    color-scheme: light;
+    --primary: #65a30d;
+    --primary-bright: #76b900;
+    --primary-dark: #4d7c0f;
+    --on-primary: #ffffff;
+    --cyan: #0284c7;
+    --bg-base: #eef4fb;
+    --bg-grad-1: #e4eefc;
+    --bg-grad-2: #f5f8ff;
+    --nav-bg: rgba(255, 255, 255, 0.86);
+    --utility-bg: rgba(241, 245, 252, 0.92);
+    --crumb-bg: rgba(241, 245, 249, 0.86);
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --soft-bg: rgba(241, 245, 249, 0.92);
+    --input-bg: #ffffff;
+    --border: rgba(15, 23, 42, 0.14);
+    --border-strong: rgba(15, 23, 42, 0.28);
+    --text: #0f172a;
+    --body: #1e293b;
+    --mute: #475569;
+    --ok: #365314;
+    --ok-bg: rgba(236, 252, 203, 0.94);
+    --bad: #dc2626;
+    --bad-text: #7f1d1d;
+    --bad-bg: rgba(254, 226, 226, 0.94);
+    --wait: #64748b;
+    --wait-bg: rgba(241, 245, 249, 0.94);
+    --warn: #d97706;
+    --warn-text: #78350f;
+    --warn-bg: rgba(254, 243, 199, 0.94);
+    --footer-bg: rgba(241, 245, 252, 0.92);
+    --footer-bar: rgba(226, 232, 240, 0.92);
+    --glow: 0 0 18px rgba(101, 163, 13, 0.16);
+    --card-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
   }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--bg-base); }
+  body {
+    margin: 0; min-height: 100dvh;
+    background: radial-gradient(ellipse at 20% 0%, var(--bg-grad-1) 0%, var(--bg-base) 52%, var(--bg-grad-2) 100%);
+    color: var(--body); font: 400 16px/1.6 var(--font);
+    position: relative; overflow-x: hidden;
+  }
+  #cosmos-bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  .page-layer { position: relative; z-index: 1; min-height: 100dvh; display: flex; flex-direction: column; }
   :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   .shell { width: min(1280px, 100%); margin-inline: auto; padding-inline: clamp(16px, 4vw, 48px); }
   .narrow { width: min(860px, 100%); margin-inline: auto; padding-inline: clamp(16px, 4vw, 32px); }
 
   /* Utility + Primary Nav */
-  .utility-bar { background: var(--surface-dark); color: var(--on-dark-mute); border-bottom: 1px solid #222222; font-size: 12px; }
+  .utility-bar { background: var(--utility-bg); color: var(--mute); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); font-size: 12px; }
   .utility-inner { min-height: 32px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 6px; }
-  .utility-tag { color: var(--on-dark); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .utility-tag { color: var(--primary); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 
-  .primary-nav {
-    position: sticky; top: 0; z-index: 20;
-    background: var(--surface-dark); color: var(--on-dark);
-    border-bottom: 1px solid var(--hairline-strong);
-    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.3);
+  .primary-nav { position: sticky; top: 0; z-index: 20; background: var(--nav-bg); color: var(--text); border-bottom: 1px solid var(--border); backdrop-filter: blur(14px); }
+  .nav-inner { min-height: 64px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; padding-block: 8px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-size: 17px; font-weight: 700; }
+  .brand-square { width: 12px; height: 12px; background: var(--primary); box-shadow: 0 0 12px var(--primary); flex: 0 0 12px; }
+  .nav-right { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 18px; }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+  .nav-links a { color: var(--mute); text-decoration: none; font-size: 15px; font-weight: 700; padding: 8px 0; border-bottom: 2px solid transparent; }
+  .nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--text); border-bottom-color: var(--primary); }
+  .theme-toggle {
+    display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 6px 14px;
+    background: var(--soft-bg); color: var(--text); border: 1px solid var(--border-strong);
+    border-radius: var(--radius); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
   }
-  .nav-inner { min-height: 64px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; padding-block: 8px; }
-  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--on-dark); text-decoration: none; font-size: 16px; font-weight: 700; }
-  .brand-square { width: 12px; height: 12px; background: var(--primary); flex: 0 0 12px; }
-  .nav-links { display: flex; flex-wrap: wrap; gap: 4px 20px; }
-  .nav-links a {
-    color: var(--on-dark-mute); text-decoration: none; font-size: 15px; font-weight: 700;
-    padding: 8px 0; border-bottom: 2px solid transparent;
-  }
-  .nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--on-dark); border-bottom-color: var(--primary); }
+  .theme-toggle:hover { border-color: var(--primary); }
 
   /* Breadcrumb */
-  .breadcrumb-bar { background: var(--surface-soft); border-bottom: 1px solid var(--hairline); }
+  .breadcrumb-bar { background: var(--crumb-bg); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); }
   .breadcrumb-inner {
-    min-height: 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
-    gap: 8px 16px; padding-block: 8px; font-size: 14px; font-weight: 700;
+    min-height: 44px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: 8px 16px; padding-block: 6px; font-size: 14px; font-weight: 700;
   }
   .breadcrumb-trail { display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; color: var(--body); }
   .breadcrumb-trail a { color: var(--body); text-decoration: none; }
-  .breadcrumb-trail a:hover { color: var(--ink); text-decoration: underline; }
+  .breadcrumb-trail a:hover { color: var(--primary); text-decoration: underline; }
   .crumb-sep { color: var(--mute); }
 
-  /* Dark Hero Chapter */
-  .hero-band { background: var(--surface-dark); color: var(--on-dark); padding-block: clamp(32px, 5vw, 56px); }
+  /* Hero */
+  .hero-band { padding-block: clamp(28px, 4.5vw, 48px) 16px; }
   .eyebrow {
     display: inline-flex; align-items: center; gap: 10px; margin-bottom: 10px;
-    color: var(--primary); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 4px 12px; background: var(--soft-bg); border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--primary); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
   }
-  .eyebrow::before { content: ""; width: 12px; height: 12px; background: var(--primary); flex: 0 0 12px; }
-  h1 { color: var(--on-dark); font-size: clamp(28px, 4.5vw, 40px); font-weight: 700; line-height: 1.25; margin: 0 0 10px; }
-  .sub { color: var(--on-dark-mute); margin: 0; font-size: 16px; max-width: 66ch; }
-  .sub strong { color: var(--on-dark); }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; background: var(--primary); box-shadow: 0 0 10px var(--primary); flex: 0 0 8px; }
+  h1 { color: var(--text); font-size: clamp(28px, 4.5vw, 40px); font-weight: 700; line-height: 1.25; margin: 0 0 10px; }
+  .sub { color: var(--mute); margin: 0; font-size: 16px; max-width: 66ch; }
+  .sub strong { color: var(--text); }
 
-  /* Paper-White Body */
-  main { flex: 1; padding-block: clamp(28px, 4vw, 48px); }
-  .banner { padding: 14px 18px; border-radius: var(--radius-sm); margin-bottom: 20px; display: none; font-size: 15px; font-weight: 700; }
+  /* Body */
+  main { flex: 1; padding-block: 16px clamp(32px, 5vw, 56px); }
+  .banner { padding: 14px 18px; border-radius: var(--radius); margin-bottom: 20px; display: none; font-size: 15px; font-weight: 700; backdrop-filter: blur(10px); }
   .banner.show { display: block; }
-  .banner.warn { background: var(--warn-bg); color: var(--ink); border: 1px solid var(--warn); border-left: 4px solid var(--warn); }
+  .banner.warn { background: var(--warn-bg); color: var(--warn-text); border: 1px solid var(--warn); border-left: 4px solid var(--warn); }
 
   .panel {
-    position: relative; background: var(--canvas); border: 1px solid var(--hairline);
-    border-radius: var(--radius-sm); padding: 24px 24px 24px 28px; margin-bottom: 24px;
+    position: relative; background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px 24px 24px 28px; margin-bottom: 24px;
+    backdrop-filter: blur(14px); box-shadow: var(--card-shadow);
   }
   .panel::before { content: ""; position: absolute; top: 0; left: 0; width: 12px; height: 12px; background: var(--primary); }
   .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-  label { font-weight: 700; color: var(--ink); font-size: 15px; }
+  label { font-weight: 700; color: var(--text); font-size: 15px; }
   input[type=password] {
-    flex: 1; min-width: 220px; height: 44px; font: inherit; padding: 10px 14px;
-    background: var(--canvas); color: var(--ink);
-    border: 1px solid var(--hairline); border-radius: var(--radius-sm);
+    flex: 1; min-width: 220px; height: 46px; font: inherit; padding: 10px 14px;
+    background: var(--input-bg); color: var(--text);
+    border: 1px solid var(--border-strong); border-radius: var(--radius);
   }
   input[type=password]:focus { border: 2px solid var(--primary); outline: none; }
-  button {
-    min-height: 44px; font: inherit; font-size: 16px; font-weight: 700;
-    padding: 11px 24px; border-radius: var(--radius-sm);
-    border: 1px solid var(--primary); background: var(--primary); color: var(--on-primary); cursor: pointer;
+  button#run {
+    min-height: 46px; font: inherit; font-size: 16px; font-weight: 700;
+    padding: 11px 24px; border-radius: var(--radius);
+    border: 1px solid var(--primary); background: var(--primary); color: var(--on-primary);
+    cursor: pointer; box-shadow: var(--glow);
   }
-  button:hover:not(:disabled), button:active:not(:disabled) { background: var(--primary-dark); border-color: var(--primary-dark); }
-  button:disabled { background: var(--surface-soft); border-color: var(--hairline); color: var(--ash); cursor: wait; }
+  button#run:hover:not(:disabled) { background: var(--primary-bright); }
+  button#run:active:not(:disabled) { background: var(--primary-dark); }
+  button#run:disabled { opacity: 0.5; cursor: wait; box-shadow: none; }
   .note { color: var(--mute); font-size: 14px; margin: 10px 0 0; }
 
   ol.checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
   .check {
-    position: relative; background: var(--canvas); border: 1px solid var(--hairline); border-radius: var(--radius-sm);
+    position: relative; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
     padding: 16px 18px; display: grid; grid-template-columns: 24px 1fr auto; gap: 4px 14px; align-items: start;
+    backdrop-filter: blur(14px); box-shadow: var(--card-shadow);
   }
   .check.ok { border-left: 4px solid var(--primary); }
   .check.bad { border-left: 4px solid var(--bad); }
-  .lamp { width: 18px; height: 18px; border-radius: 50%; margin-top: 3px; background: var(--wait); border: 2px solid var(--hairline); }
-  .check.ok .lamp { background: var(--primary); border-color: var(--ok); }
-  .check.bad .lamp { background: var(--bad); border-color: var(--bad-deep); }
-  .check.skip .lamp { background: var(--canvas); border-color: var(--wait); }
-  .title { font-weight: 700; color: var(--ink); font-size: 16px; }
+  .lamp { width: 18px; height: 18px; border-radius: 50%; margin-top: 3px; background: var(--wait); border: 2px solid var(--border-strong); }
+  .check.ok .lamp { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
+  .check.bad .lamp { background: var(--bad); border-color: var(--bad); box-shadow: 0 0 10px var(--bad); }
+  .check.skip .lamp { background: transparent; border-color: var(--wait); }
+  .title { font-weight: 700; color: var(--text); font-size: 16px; }
   .badge {
-    font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-sm);
-    background: var(--wait-bg); border: 1px solid var(--hairline); color: var(--mute); white-space: nowrap;
+    font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 4px;
+    background: var(--wait-bg); border: 1px solid var(--border); color: var(--mute); white-space: nowrap;
   }
   .check.ok .badge { background: var(--ok-bg); border-color: var(--primary); color: var(--ok); }
-  .check.bad .badge { background: var(--bad-bg); border-color: var(--bad); color: var(--bad-deep); }
+  .check.bad .badge { background: var(--bad-bg); border-color: var(--bad); color: var(--bad-text); }
   .detail, .hint { grid-column: 2 / 4; font-size: 15px; }
   .detail { color: var(--mute); }
-  .hint { color: var(--bad-deep); font-weight: 700; display: none; margin-top: 2px; }
+  .hint { color: var(--bad-text); font-weight: 700; display: none; margin-top: 2px; }
   .check.bad .hint { display: block; }
-  .summary { font-weight: 700; font-size: 16px; color: var(--ink); }
-  code { font-family: ui-monospace, Consolas, monospace; font-size: 14px; background: var(--surface-soft); border: 1px solid var(--hairline); padding: 1px 5px; border-radius: var(--radius-sm); color: var(--ink); }
+  .summary { font-weight: 700; font-size: 16px; color: var(--text); }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: 14px; background: var(--soft-bg); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--cyan); }
 
-  /* Dark Footer */
-  footer { background: var(--surface-dark); color: var(--on-dark-mute); margin-top: auto; }
+  /* Footer */
+  footer { background: var(--footer-bg); color: var(--mute); border-top: 1px solid var(--border); backdrop-filter: blur(12px); margin-top: auto; }
   .footer-inner {
     display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
-    gap: 12px 24px; padding-block: 28px; border-bottom: 1px solid var(--hairline-strong); font-size: 14px;
+    gap: 12px 24px; padding-block: 24px; border-bottom: 1px solid var(--border); font-size: 14px;
   }
   .footer-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-  .footer-links a { color: var(--on-dark-mute); text-decoration: none; font-weight: 700; }
+  .footer-links a { color: var(--mute); text-decoration: none; font-weight: 700; }
   .footer-links a:hover { color: var(--primary); text-decoration: underline; }
-  .footer-legal { background: var(--surface-elevated); padding-block: 14px; }
+  .footer-legal { background: var(--footer-bar); padding-block: 14px; }
   .footer-legal-inner {
     display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px;
-    color: var(--mute); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--mute); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
   }
 </style>
 </head>
 <body>
-<div class="utility-bar">
-  <div class="shell utility-inner">
-    <span class="utility-tag">PHARMACY WORKSHOP</span>
-    <span>API &amp; SUPABASE DIAGNOSTICS</span>
-  </div>
-</div>
+<canvas id="cosmos-bg" aria-hidden="true"></canvas>
 
-<header class="primary-nav">
-  <div class="shell nav-inner">
-    <a class="brand" href="./index.html"><span class="brand-square" aria-hidden="true"></span>คลังข้อมูลยา</a>
-    <nav class="nav-links" aria-label="เมนูนำทาง">
-      <a href="./index.html">หน้าแรก</a>
-      <a href="./pos.html">หน้าขายยา</a>
-      <a href="./admin.html">จัดการระบบ</a>
-      <a href="./dashboard.html">Dashboard คลังยา</a>
-      <a href="./status.html" aria-current="page">ตรวจสถานะระบบ</a>
-    </nav>
-  </div>
-</header>
-
-<div class="breadcrumb-bar" aria-label="ตำแหน่งปัจจุบัน">
-  <div class="shell breadcrumb-inner">
-    <div class="breadcrumb-trail">
-      <a href="./index.html">หน้าแรก</a>
-      <span class="crumb-sep" aria-hidden="true">/</span>
-      <span>ตรวจสถานะระบบ</span>
+<div class="page-layer">
+  <div class="utility-bar">
+    <div class="shell utility-inner">
+      <span class="utility-tag">COSMIC PHARMACY OS</span>
+      <span>API &amp; SUPABASE DIAGNOSTICS</span>
     </div>
-    <span style="color:var(--mute);font-size:12px;font-weight:400;">ข้อมูลทั้งหมดเป็นข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
   </div>
-</div>
 
-<section class="hero-band">
-  <div class="narrow">
-    <div class="eyebrow">SYSTEM HEALTH CHECK</div>
-    <h1>ไฟสถานะระบบร้านยาจำลอง</h1>
-    <p class="sub">ตรวจว่า API ทั้ง 3 ไฟล์บน Vercel เชื่อมกับ Supabase ได้ครบ ทุกการตรวจ<strong>ไม่เปลี่ยนข้อมูล</strong>ในฐานข้อมูล</p>
-  </div>
-</section>
-
-<main class="narrow">
-  <div id="where" class="banner warn"></div>
-
-  <section class="panel">
-    <div class="row">
-      <label for="code">รหัสผู้ดูแล</label>
-      <input id="code" type="password" autocomplete="off" placeholder="ใช้เฉพาะไฟดวงที่ 5 เว้นว่างได้">
+  <header class="primary-nav">
+    <div class="shell nav-inner">
+      <a class="brand" href="./index.html"><span class="brand-square" aria-hidden="true"></span>คลังข้อมูลยา</a>
+      <div class="nav-right">
+        <nav class="nav-links" aria-label="เมนูนำทาง">
+          <a href="./index.html">หน้าแรก</a>
+          <a href="./pos.html">หน้าขายยา</a>
+          <a href="./admin.html">จัดการระบบ</a>
+          <a href="./dashboard.html">Dashboard คลังยา</a>
+          <a href="./status.html" aria-current="page">ตรวจสถานะระบบ</a>
+        </nav>
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="สลับโหมดสว่างหรือโหมดมืด"></button>
+      </div>
     </div>
-    <p class="note">รหัสถูกส่งไปที่ <code>/api/admin</code> ทาง header เท่านั้น หน้านี้ไม่บันทึกรหัสไว้ที่ใด ปิดแท็บแล้วรหัสหายไป</p>
-    <div class="row" style="margin-top:14px">
-      <button id="run">ตรวจทั้งหมด</button>
-      <span id="summary" class="summary"></span>
+  </header>
+
+  <div class="breadcrumb-bar" aria-label="ตำแหน่งปัจจุบัน">
+    <div class="shell breadcrumb-inner">
+      <div class="breadcrumb-trail">
+        <a href="./index.html">หน้าแรก</a>
+        <span class="crumb-sep" aria-hidden="true">/</span>
+        <span>ตรวจสถานะระบบ</span>
+      </div>
+      <span style="color:var(--mute);font-size:13px;font-weight:600;">ข้อมูลทั้งหมดเป็นข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
+    </div>
+  </div>
+
+  <section class="hero-band">
+    <div class="narrow">
+      <div class="eyebrow">SYSTEM HEALTH CHECK</div>
+      <h1>ไฟสถานะระบบร้านยาจำลอง</h1>
+      <p class="sub">ตรวจว่า API ทั้ง 3 ไฟล์บน Vercel เชื่อมกับ Supabase ได้ครบ ทุกการตรวจ<strong>ไม่เปลี่ยนข้อมูล</strong>ในฐานข้อมูล</p>
     </div>
   </section>
 
-  <ol class="checks" id="checks"></ol>
-</main>
+  <main class="narrow">
+    <div id="where" class="banner warn"></div>
 
-<footer>
-  <div class="shell footer-inner">
-    <span>ข้อมูลทั้งหมดเป็นข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
-    <div class="footer-links">
-      <a href="./index.html">หน้าแรก</a>
-      <a href="./pos.html">หน้าขายยา</a>
-      <a href="./admin.html">จัดการระบบ</a>
-      <a href="./dashboard.html">Dashboard คลังยา</a>
+    <section class="panel">
+      <div class="row">
+        <label for="code">รหัสผู้ดูแล</label>
+        <input id="code" type="password" autocomplete="off" placeholder="ใช้เฉพาะไฟดวงที่ 5 เว้นว่างได้">
+      </div>
+      <p class="note">รหัสถูกส่งไปที่ <code>/api/admin</code> ทาง header เท่านั้น หน้านี้ไม่บันทึกรหัสไว้ที่ใด ปิดแท็บแล้วรหัสหายไป</p>
+      <div class="row" style="margin-top:14px">
+        <button id="run">ตรวจทั้งหมด</button>
+        <span id="summary" class="summary"></span>
+      </div>
+    </section>
+
+    <ol class="checks" id="checks"></ol>
+  </main>
+
+  <footer>
+    <div class="shell footer-inner">
+      <span>ข้อมูลทั้งหมดเป็นข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
+      <div class="footer-links">
+        <a href="./index.html">หน้าแรก</a>
+        <a href="./pos.html">หน้าขายยา</a>
+        <a href="./admin.html">จัดการระบบ</a>
+        <a href="./dashboard.html">Dashboard คลังยา</a>
+      </div>
     </div>
-  </div>
-  <div class="footer-legal">
-    <div class="shell footer-legal-inner">
-      <span>WORKSHOP ระบบร้านยาจำลอง</span>
-      <span>DESIGN-NVIDIA SYSTEM · SUPABASE + VERCEL</span>
+    <div class="footer-legal">
+      <div class="shell footer-legal-inner">
+        <span>WORKSHOP ระบบร้านยาจำลอง</span>
+        <span>COSMIC EDITION · SUPABASE + VERCEL</span>
+      </div>
     </div>
-  </div>
-</footer>
+  </footer>
+</div>
 
 <script>
+// ---------- โหมดมืด/สว่าง + จักรวาลเคลื่อนไหว ----------
+(function initThemeAndCosmos() {
+  const btn = document.getElementById('theme-toggle');
+  const apply = (theme) => {
+    document.documentElement.setAttribute('data-theme', theme);
+    try { localStorage.setItem('pharmacy_theme', theme); } catch (e) {}
+    btn.textContent = theme === 'dark' ? '☀ โหมดสว่าง' : '☾ โหมดมืด';
+  };
+  apply(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+  btn.addEventListener('click', () => {
+    apply(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+  });
+
+  const canvas = document.getElementById('cosmos-bg');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let width = 0, height = 0, dpr = 1, pointerX = 0, pointerY = 0, smoothX = 0, smoothY = 0;
+  const stars = [], meteors = [], ships = [];
+  const darkPalette = ['#ffffff', '#e0f2fe', '#c7d2fe', '#fde68a', '#bef264'];
+  const lightPalette = ['#0284c7', '#4f46e5', '#65a30d', '#0ea5e9', '#6366f1'];
+  function initShips() {
+    ships.length = 0;
+    const w = Math.max(width, 800), h = Math.max(height, 600);
+    ships.push(
+      { kind: 'ufo',    x: w * 0.14, y: h * 0.22, vx: 0.62,  vy: 0,     sc: 1.0,  phase: 0.5, beam: true },
+      { kind: 'rocket', x: w * 0.84, y: h * 0.74, vx: -0.92, vy: -0.22, sc: 0.92, phase: 2.1 },
+      { kind: 'alien',  x: w * 0.87, y: h * 0.26, vx: -0.35, vy: 0,     sc: 0.9,  phase: 4.0 },
+      { kind: 'ufo',    x: w * 0.6,  y: h * 0.86, vx: -0.45, vy: 0,     sc: 0.72, phase: 1.4, beam: false }
+    );
+  }
+  function drawPlanet(x, y, r, isLight) {
+    ctx.save(); ctx.translate(x, y); ctx.globalAlpha = isLight ? 0.34 : 0.46;
+    const bg = ctx.createRadialGradient(-r * 0.35, -r * 0.35, r * 0.1, 0, 0, r);
+    bg.addColorStop(0, isLight ? '#93c5fd' : '#818cf8'); bg.addColorStop(0.65, isLight ? '#6366f1' : '#312e81'); bg.addColorStop(1, isLight ? '#312e81' : '#0f172a');
+    ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = isLight ? '#0284c7' : '#a3e635'; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.ellipse(0, 0, r * 2.05, r * 0.46, -0.26, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
+  function drawUfo(x, y, sc, t, phase, isLight, hasBeam) {
+    ctx.save(); ctx.translate(x, y + Math.sin(t * 2.1 + phase) * 8); ctx.scale(sc, sc);
+    ctx.rotate(Math.sin(t * 1.4 + phase) * 0.08); ctx.globalAlpha = isLight ? 0.62 : 0.82;
+    if (hasBeam) {
+      const ba = (isLight ? 0.14 : 0.22) * (0.65 + 0.35 * Math.sin(t * 3 + phase));
+      const bg = ctx.createLinearGradient(0, 6, 0, 68);
+      bg.addColorStop(0, 'rgba(132, 204, 22, ' + ba + ')'); bg.addColorStop(1, 'rgba(132, 204, 22, 0)');
+      ctx.fillStyle = bg; ctx.beginPath(); ctx.moveTo(-12, 8); ctx.lineTo(12, 8); ctx.lineTo(28, 68); ctx.lineTo(-28, 68); ctx.closePath(); ctx.fill();
+    }
+    ctx.fillStyle = isLight ? 'rgba(56, 189, 248, 0.35)' : 'rgba(125, 211, 252, 0.28)';
+    ctx.strokeStyle = isLight ? '#0284c7' : '#7dd3fc'; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(0, -3, 15, Math.PI, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#84cc16'; ctx.beginPath(); ctx.ellipse(0, -9, 5.5, 6.5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath(); ctx.ellipse(-2.1, -9.2, 1.4, 2.2, -0.25, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(2.1, -9.2, 1.4, 2.2, 0.25, 0, Math.PI * 2); ctx.fill();
+    const hull = ctx.createLinearGradient(0, -6, 0, 11);
+    hull.addColorStop(0, isLight ? '#64748b' : '#cbd5e1'); hull.addColorStop(0.55, isLight ? '#334155' : '#475569'); hull.addColorStop(1, '#1e293b');
+    ctx.fillStyle = hull; ctx.beginPath(); ctx.ellipse(0, 2, 30, 9.5, 0, 0, Math.PI * 2); ctx.fill();
+    const lights = ['#a3e635', '#38bdf8', '#fde047', '#c084fc', '#a3e635'];
+    for (let i = 0; i < 5; i++) {
+      const lx = -18 + i * 9, ly = 2.5 + Math.cos((i - 2) * 0.65) * 1.4;
+      ctx.fillStyle = lights[i]; ctx.globalAlpha = (isLight ? 0.6 : 0.95) * (0.5 + 0.5 * Math.sin(t * 6 + i * 1.3 + phase));
+      ctx.beginPath(); ctx.arc(lx, ly, 2.1, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawRocket(x, y, sc, vx, vy, t, phase, isLight) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(Math.atan2(vy, vx)); ctx.scale(sc, sc); ctx.globalAlpha = isLight ? 0.6 : 0.82;
+    const flick = 1 + 0.25 * Math.sin(t * 28 + phase);
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.75)'; ctx.beginPath(); ctx.moveTo(-20, -4.5); ctx.lineTo(-20 - 18 * flick, 0); ctx.lineTo(-20, 4.5); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#a3e635'; ctx.beginPath(); ctx.moveTo(-20, -2.6); ctx.lineTo(-20 - 11 * flick, 0); ctx.lineTo(-20, 2.6); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = isLight ? '#4d7c0f' : '#84cc16'; ctx.beginPath();
+    ctx.moveTo(-18, -6); ctx.lineTo(-24, -15); ctx.lineTo(-8, -7); ctx.closePath();
+    ctx.moveTo(-18, 6); ctx.lineTo(-24, 15); ctx.lineTo(-8, 7); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = isLight ? '#334155' : '#e2e8f0'; ctx.beginPath();
+    ctx.moveTo(26, 0); ctx.quadraticCurveTo(10, -10, -20, -6.5); ctx.lineTo(-20, 6.5); ctx.quadraticCurveTo(10, 10, 26, 0); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#84cc16'; ctx.beginPath(); ctx.moveTo(26, 0); ctx.quadraticCurveTo(18, -5.2, 13, -5.8); ctx.lineTo(13, 5.8); ctx.quadraticCurveTo(18, 5.2, 26, 0); ctx.fill();
+    ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.arc(2, 0, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(3.2, -1.2, 1.3, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawAlienFloat(x, y, sc, t, phase, isLight) {
+    ctx.save(); ctx.translate(x, y + Math.sin(t * 1.7 + phase) * 11); ctx.rotate(Math.sin(t * 1.1 + phase) * 0.14);
+    ctx.scale(sc, sc); ctx.globalAlpha = isLight ? 0.62 : 0.82;
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.45)'; ctx.beginPath(); ctx.arc(11, 10, 4 + Math.sin(t * 12 + phase) * 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = isLight ? '#475569' : '#94a3b8'; ctx.beginPath(); ctx.rect(-7, 5, 14, 15); ctx.fill();
+    ctx.fillStyle = '#38bdf8'; ctx.fillRect(-3.5, 9, 7, 4);
+    ctx.strokeStyle = '#84cc16'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-7, 9); ctx.lineTo(-14, 3 + Math.sin(t * 5 + phase) * 3); ctx.moveTo(7, 9); ctx.lineTo(13, 13); ctx.stroke();
+    ctx.strokeStyle = '#a3e635'; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(-4, -12); ctx.lineTo(-8, -20); ctx.moveTo(4, -12); ctx.lineTo(8, -20); ctx.stroke();
+    ctx.fillStyle = '#a3e635'; ctx.beginPath(); ctx.arc(-8, -20.5, 2.2, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(8, -20.5, 2.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#84cc16'; ctx.beginPath(); ctx.ellipse(0, -4, 9.5, 11, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.ellipse(-3.6, -4.5, 2.4, 3.6, -0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(3.6, -4.5, 2.4, 3.6, 0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(-4.2, -5.6, 0.9, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(3, -5.6, 0.9, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = isLight ? 'rgba(2, 132, 199, 0.55)' : 'rgba(186, 230, 253, 0.6)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(0, -5, 14.5, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
+  function resetStar(s, rnd) {
+    s.x = (Math.random() - 0.5) * 1800; s.y = (Math.random() - 0.5) * 1100;
+    s.z = rnd ? Math.random() * 1400 + 80 : 1480; s.pz = s.z;
+    s.size = Math.random() * 1.5 + 0.6; s.ci = Math.floor(Math.random() * darkPalette.length);
+    s.phase = Math.random() * Math.PI * 2;
+  }
+  for (let i = 0; i < 180; i++) { const s = {}; resetStar(s, true); stars.push(s); }
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    width = window.innerWidth; height = window.innerHeight;
+    canvas.width = Math.floor(width * dpr); canvas.height = Math.floor(height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  window.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    pointerX = (e.clientX / Math.max(1, width) - 0.5) * 60;
+    pointerY = (e.clientY / Math.max(1, height) - 0.5) * 40;
+  });
+  resize();
+  initShips();
+  function render(now) {
+    const t = now * 0.001;
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    ctx.clearRect(0, 0, width, height);
+    smoothX += (pointerX - smoothX) * 0.04; smoothY += (pointerY - smoothY) * 0.04;
+    const neb = isLight
+      ? [
+          { x: width * (0.2 + Math.sin(t * 0.14) * 0.07), y: height * (0.24 + Math.cos(t * 0.11) * 0.06), r: Math.max(width, height) * 0.42, c: 'rgba(56, 189, 248, 0.15)' },
+          { x: width * (0.8 + Math.cos(t * 0.12) * 0.06), y: height * (0.3 + Math.sin(t * 0.15) * 0.06), r: Math.max(width, height) * 0.38, c: 'rgba(129, 140, 248, 0.13)' },
+          { x: width * (0.52 + Math.sin(t * 0.1) * 0.08), y: height * (0.82 + Math.cos(t * 0.13) * 0.05), r: Math.max(width, height) * 0.36, c: 'rgba(118, 185, 0, 0.11)' },
+        ]
+      : [
+          { x: width * (0.18 + Math.sin(t * 0.14) * 0.07), y: height * (0.22 + Math.cos(t * 0.11) * 0.06), r: Math.max(width, height) * 0.44, c: 'rgba(56, 189, 248, 0.12)' },
+          { x: width * (0.82 + Math.cos(t * 0.12) * 0.06), y: height * (0.34 + Math.sin(t * 0.15) * 0.06), r: Math.max(width, height) * 0.4, c: 'rgba(139, 92, 246, 0.13)' },
+          { x: width * (0.5 + Math.sin(t * 0.1) * 0.08), y: height * (0.84 + Math.cos(t * 0.13) * 0.05), r: Math.max(width, height) * 0.38, c: 'rgba(132, 204, 22, 0.1)' },
+        ];
+    for (const n of neb) {
+      const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+      g.addColorStop(0, n.c); g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, width, height);
+    }
+    const cx = width * 0.5 - smoothX, cy = height * 0.46 - smoothY, speed = reduced ? 0 : 2.1;
+    const pal = isLight ? lightPalette : darkPalette;
+    for (const s of stars) {
+      s.pz = s.z; s.z -= speed; if (s.z <= 24) resetStar(s, false);
+      const f = 520 / s.z, sx = cx + s.x * f, sy = cy + s.y * f;
+      if (sx < -40 || sx > width + 40 || sy < -40 || sy > height + 40) continue;
+      const pf = 520 / s.pz, px = cx + s.x * pf, py = cy + s.y * pf;
+      const depth = Math.max(0, Math.min(1, 1 - s.z / 1480));
+      const alpha = (isLight ? 0.45 : 0.85) * depth * (0.65 + 0.35 * Math.sin(t * 2.2 + s.phase));
+      const radius = Math.max(0.5, s.size * (0.45 + depth * 1.5));
+      ctx.strokeStyle = pal[s.ci]; ctx.fillStyle = pal[s.ci];
+      ctx.globalAlpha = alpha * 0.5; ctx.lineWidth = radius * 0.85;
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, sy); ctx.stroke();
+      ctx.globalAlpha = alpha; ctx.beginPath(); ctx.arc(sx, sy, radius, 0, Math.PI * 2); ctx.fill();
+    }
+    drawPlanet(width * 0.89 - smoothX * 0.3, height * 0.16 - smoothY * 0.3, 24, isLight);
+    for (const sh of ships) {
+      if (!reduced) {
+        sh.x += sh.vx; sh.y += sh.vy;
+        if (sh.vx > 0 && sh.x > width + 110) { sh.x = -110; sh.y = height * (0.14 + Math.random() * 0.72); }
+        else if (sh.vx < 0 && sh.x < -110) { sh.x = width + 110; sh.y = height * (0.14 + Math.random() * 0.72); }
+        if (sh.y < -80) sh.y = height + 70;
+        else if (sh.y > height + 80) sh.y = -70;
+      }
+      const px = sh.x - smoothX * 0.45, py = sh.y - smoothY * 0.45;
+      if (sh.kind === 'ufo') drawUfo(px, py, sh.sc, t, sh.phase, isLight, sh.beam);
+      else if (sh.kind === 'rocket') drawRocket(px, py, sh.sc, sh.vx, sh.vy, t, sh.phase, isLight);
+      else drawAlienFloat(px, py, sh.sc, t, sh.phase, isLight);
+    }
+    if (!reduced && Math.random() < 0.007 && meteors.length < 2) {
+      meteors.push({ x: Math.random() * width * 0.8 + width * 0.1, y: Math.random() * height * 0.35, vx: (Math.random() * 6 + 7) * (Math.random() < 0.5 ? 1 : -1), vy: Math.random() * 3.5 + 3.5, life: 0, maxLife: 42 + Math.random() * 24 });
+    }
+    for (let i = meteors.length - 1; i >= 0; i--) {
+      const m = meteors[i]; m.x += m.vx; m.y += m.vy; m.life += 1;
+      const a = Math.sin((m.life / m.maxLife) * Math.PI) * (isLight ? 0.5 : 0.8);
+      const tx = m.x - m.vx * 9, ty = m.y - m.vy * 9;
+      const g = ctx.createLinearGradient(m.x, m.y, tx, ty);
+      g.addColorStop(0, isLight ? 'rgba(101,163,13,' + a + ')' : 'rgba(255,255,255,' + a + ')');
+      g.addColorStop(0.4, isLight ? 'rgba(2,132,199,' + (a * 0.55) + ')' : 'rgba(163,230,53,' + (a * 0.6) + ')');
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.globalAlpha = 1; ctx.strokeStyle = g; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(tx, ty); ctx.stroke();
+      if (m.life >= m.maxLife) meteors.splice(i, 1);
+    }
+    ctx.globalAlpha = 1;
+    if (!reduced) requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+})();
+
 // ---------- รายการไฟ ----------
 const CHECKS = [
   { id: 'data',     title: '1. อ่านข้อมูลได้ (api/data.js)' },
@@ -318,7 +578,6 @@ function checkCatalog(data) {
 }
 
 async function checkDispense() {
-  // GET ต้องได้ 405 (รับเฉพาะ POST) แปลว่าไฟล์อยู่และทำงาน โดยไม่ขายยาจริง
   const r = await call('/api/dispense');
   if (r.status === 405) return setLamp('dispense', 'ok', 'ตอบ 405 ตามที่ควร (รับเฉพาะ POST) ไม่มีการขายเกิดขึ้น');
   if (r.status === 404 || r.isHtml) return setLamp('dispense', 'bad', `ได้ ${r.status}`, NOT_DEPLOYED);
@@ -343,7 +602,6 @@ async function checkAdmin(guardOk) {
   const code = document.getElementById('code').value;
   if (!code) return setLamp('admin', 'skip', 'ยังไม่ได้กรอกรหัสผู้ดูแล กรอกแล้วกดตรวจอีกครั้ง');
   if (!guardOk) return setLamp('admin', 'skip', 'ข้ามเพราะไฟดวงที่ 4 ยังไม่ผ่าน');
-  // ขอยกเลิก D0014 ซึ่งมีอุบัติการณ์อ้างอยู่ ฐานข้อมูลต้องปฏิเสธเสมอ จึงไม่มีข้อมูลเปลี่ยน
   const r = await call('/api/admin', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-admin-code': code },
@@ -376,7 +634,7 @@ runBtn.addEventListener('click', async () => {
   await checkAdmin(document.getElementById('c-guard').classList.contains('ok'));
   const ok = document.querySelectorAll('.check.ok').length;
   document.getElementById('summary').textContent =
-    ok === CHECKS.length ? 'ผ่านครบ 5 ดวง พร้อมสร้าง admin.html' : `ผ่าน ${ok} จาก ${CHECKS.length} ดวง`;
+    ok === CHECKS.length ? 'ผ่านครบ 5 ดวง พร้อมใช้งานเต็มระบบ' : `ผ่าน ${ok} จาก ${CHECKS.length} ดวง`;
   runBtn.disabled = false;
 });
 document.getElementById('code').addEventListener('keydown', e => { if (e.key === 'Enter') runBtn.click(); });
@@ -394,7 +652,7 @@ if (location.protocol === 'file:') {
   where.textContent = 'หน้านี้เปิดในเครื่อง ถ้าใช้ Live Server ไฟจะแดงเพราะไม่มี API ให้เปิดผ่านลิงก์ vercel.app (ถ้าใช้ vercel dev กดตรวจทั้งหมดได้ตามปกติ)';
   where.classList.add('show');
 } else {
-  runBtn.click();  // เปิดบน Vercel แล้วตรวจดวง 1-4 ให้ทันที
+  runBtn.click();
 }
 </script>
 </body>
