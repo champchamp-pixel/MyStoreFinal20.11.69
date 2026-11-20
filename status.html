@@ -5,56 +5,203 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ไฟสถานะระบบร้านยาจำลอง</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f6f7f9; --card: #ffffff; --text: #1d2330; --muted: #5b6475; --line: #dfe3ea;
-    --ok: #16794c; --ok-bg: #e5f5ec; --bad: #b42318; --bad-bg: #fdecea;
-    --wait: #8a94a6; --wait-bg: #eef0f4; --warn: #9a5b00; --warn-bg: #fff4e0; --accent: #2f5bd3;
+    color-scheme: light;
+    --primary: #76b900;
+    --on-primary: #000000;
+    --primary-dark: #5a8d00;
+    --ink: #000000;
+    --canvas: #ffffff;
+    --surface-dark: #000000;
+    --surface-soft: #f7f7f7;
+    --surface-elevated: #1a1a1a;
+    --hairline: #cccccc;
+    --hairline-strong: #5e5e5e;
+    --body: #1a1a1a;
+    --mute: #757575;
+    --stone: #898989;
+    --ash: #a7a7a7;
+    --on-dark: #ffffff;
+    --on-dark-mute: rgba(255, 255, 255, 0.7);
+    --link-blue: #0046a4;
+    --ok: #3f8500;
+    --ok-bg: #eef7df;
+    --bad: #e52020;
+    --bad-deep: #650b0b;
+    --bad-bg: #fdecec;
+    --wait: #898989;
+    --wait-bg: #f7f7f7;
+    --warn: #df6500;
+    --warn-bg: #feeeb2;
+    --radius-sm: 2px;
+    --font: 'Inter', 'Noto Sans Thai', Arial, sans-serif;
   }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text);
-         font: 16px/1.6 'Noto Sans Thai', system-ui, sans-serif; }
-  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
-  h1 { font-size: 24px; margin: 0 0 4px; }
-  .sub { color: var(--muted); margin: 0 0 20px; }
-  .banner { padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; display: none; }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--surface-dark); }
+  body {
+    margin: 0; min-height: 100dvh; display: flex; flex-direction: column;
+    background: var(--canvas); color: var(--body);
+    font: 400 16px/1.5 var(--font);
+  }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .shell { width: min(1280px, 100%); margin-inline: auto; padding-inline: clamp(16px, 4vw, 48px); }
+  .narrow { width: min(860px, 100%); margin-inline: auto; padding-inline: clamp(16px, 4vw, 32px); }
+
+  /* Utility + Primary Nav */
+  .utility-bar { background: var(--surface-dark); color: var(--on-dark-mute); border-bottom: 1px solid #222222; font-size: 12px; }
+  .utility-inner { min-height: 32px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 6px; }
+  .utility-tag { color: var(--on-dark); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .primary-nav {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--surface-dark); color: var(--on-dark);
+    border-bottom: 1px solid var(--hairline-strong);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.3);
+  }
+  .nav-inner { min-height: 64px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; padding-block: 8px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--on-dark); text-decoration: none; font-size: 16px; font-weight: 700; }
+  .brand-square { width: 12px; height: 12px; background: var(--primary); flex: 0 0 12px; }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+  .nav-links a {
+    color: var(--on-dark-mute); text-decoration: none; font-size: 15px; font-weight: 700;
+    padding: 8px 0; border-bottom: 2px solid transparent;
+  }
+  .nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--on-dark); border-bottom-color: var(--primary); }
+
+  /* Breadcrumb */
+  .breadcrumb-bar { background: var(--surface-soft); border-bottom: 1px solid var(--hairline); }
+  .breadcrumb-inner {
+    min-height: 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: 8px 16px; padding-block: 8px; font-size: 14px; font-weight: 700;
+  }
+  .breadcrumb-trail { display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; color: var(--body); }
+  .breadcrumb-trail a { color: var(--body); text-decoration: none; }
+  .breadcrumb-trail a:hover { color: var(--ink); text-decoration: underline; }
+  .crumb-sep { color: var(--mute); }
+
+  /* Dark Hero Chapter */
+  .hero-band { background: var(--surface-dark); color: var(--on-dark); padding-block: clamp(32px, 5vw, 56px); }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    color: var(--primary); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .eyebrow::before { content: ""; width: 12px; height: 12px; background: var(--primary); flex: 0 0 12px; }
+  h1 { color: var(--on-dark); font-size: clamp(28px, 4.5vw, 40px); font-weight: 700; line-height: 1.25; margin: 0 0 10px; }
+  .sub { color: var(--on-dark-mute); margin: 0; font-size: 16px; max-width: 66ch; }
+  .sub strong { color: var(--on-dark); }
+
+  /* Paper-White Body */
+  main { flex: 1; padding-block: clamp(28px, 4vw, 48px); }
+  .banner { padding: 14px 18px; border-radius: var(--radius-sm); margin-bottom: 20px; display: none; font-size: 15px; font-weight: 700; }
   .banner.show { display: block; }
-  .banner.warn { background: var(--warn-bg); color: var(--warn); border: 1px solid #f1c27d; }
-  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  label { font-weight: 600; }
-  input[type=password] { flex: 1; min-width: 200px; font: inherit; padding: 8px 12px;
-         border: 1px solid var(--line); border-radius: 8px; }
-  button { font: inherit; font-weight: 600; padding: 8px 18px; border-radius: 8px; border: 1px solid var(--accent);
-           background: var(--accent); color: #fff; cursor: pointer; }
-  button.ghost { background: #fff; color: var(--accent); }
-  button:disabled { opacity: .5; cursor: wait; }
-  .note { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
-  ol.checks { list-style: none; padding: 0; margin: 0; }
-  .check { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px;
-           margin-bottom: 10px; display: grid; grid-template-columns: 28px 1fr auto; gap: 4px 12px; align-items: start; }
-  .lamp { width: 22px; height: 22px; border-radius: 50%; margin-top: 3px; background: var(--wait); border: 3px solid var(--wait-bg); }
-  .check.ok .lamp { background: var(--ok); border-color: var(--ok-bg); }
-  .check.bad .lamp { background: var(--bad); border-color: var(--bad-bg); }
-  .check.skip .lamp { background: #fff; border-color: var(--wait); }
-  .title { font-weight: 600; }
-  .badge { font-size: 14px; font-weight: 600; padding: 2px 10px; border-radius: 999px; background: var(--wait-bg); color: var(--muted); white-space: nowrap; }
-  .check.ok .badge { background: var(--ok-bg); color: var(--ok); }
-  .check.bad .badge { background: var(--bad-bg); color: var(--bad); }
+  .banner.warn { background: var(--warn-bg); color: var(--ink); border: 1px solid var(--warn); border-left: 4px solid var(--warn); }
+
+  .panel {
+    position: relative; background: var(--canvas); border: 1px solid var(--hairline);
+    border-radius: var(--radius-sm); padding: 24px 24px 24px 28px; margin-bottom: 24px;
+  }
+  .panel::before { content: ""; position: absolute; top: 0; left: 0; width: 12px; height: 12px; background: var(--primary); }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  label { font-weight: 700; color: var(--ink); font-size: 15px; }
+  input[type=password] {
+    flex: 1; min-width: 220px; height: 44px; font: inherit; padding: 10px 14px;
+    background: var(--canvas); color: var(--ink);
+    border: 1px solid var(--hairline); border-radius: var(--radius-sm);
+  }
+  input[type=password]:focus { border: 2px solid var(--primary); outline: none; }
+  button {
+    min-height: 44px; font: inherit; font-size: 16px; font-weight: 700;
+    padding: 11px 24px; border-radius: var(--radius-sm);
+    border: 1px solid var(--primary); background: var(--primary); color: var(--on-primary); cursor: pointer;
+  }
+  button:hover:not(:disabled), button:active:not(:disabled) { background: var(--primary-dark); border-color: var(--primary-dark); }
+  button:disabled { background: var(--surface-soft); border-color: var(--hairline); color: var(--ash); cursor: wait; }
+  .note { color: var(--mute); font-size: 14px; margin: 10px 0 0; }
+
+  ol.checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .check {
+    position: relative; background: var(--canvas); border: 1px solid var(--hairline); border-radius: var(--radius-sm);
+    padding: 16px 18px; display: grid; grid-template-columns: 24px 1fr auto; gap: 4px 14px; align-items: start;
+  }
+  .check.ok { border-left: 4px solid var(--primary); }
+  .check.bad { border-left: 4px solid var(--bad); }
+  .lamp { width: 18px; height: 18px; border-radius: 50%; margin-top: 3px; background: var(--wait); border: 2px solid var(--hairline); }
+  .check.ok .lamp { background: var(--primary); border-color: var(--ok); }
+  .check.bad .lamp { background: var(--bad); border-color: var(--bad-deep); }
+  .check.skip .lamp { background: var(--canvas); border-color: var(--wait); }
+  .title { font-weight: 700; color: var(--ink); font-size: 16px; }
+  .badge {
+    font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-sm);
+    background: var(--wait-bg); border: 1px solid var(--hairline); color: var(--mute); white-space: nowrap;
+  }
+  .check.ok .badge { background: var(--ok-bg); border-color: var(--primary); color: var(--ok); }
+  .check.bad .badge { background: var(--bad-bg); border-color: var(--bad); color: var(--bad-deep); }
   .detail, .hint { grid-column: 2 / 4; font-size: 15px; }
-  .detail { color: var(--muted); }
-  .hint { color: var(--bad); display: none; }
+  .detail { color: var(--mute); }
+  .hint { color: var(--bad-deep); font-weight: 700; display: none; margin-top: 2px; }
   .check.bad .hint { display: block; }
-  .summary { font-weight: 600; font-size: 18px; margin: 4px 0 0; }
-  code { font-family: ui-monospace, Consolas, monospace; font-size: 14px; background: var(--wait-bg); padding: 1px 5px; border-radius: 4px; }
+  .summary { font-weight: 700; font-size: 16px; color: var(--ink); }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: 14px; background: var(--surface-soft); border: 1px solid var(--hairline); padding: 1px 5px; border-radius: var(--radius-sm); color: var(--ink); }
+
+  /* Dark Footer */
+  footer { background: var(--surface-dark); color: var(--on-dark-mute); margin-top: auto; }
+  .footer-inner {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: 12px 24px; padding-block: 28px; border-bottom: 1px solid var(--hairline-strong); font-size: 14px;
+  }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .footer-links a { color: var(--on-dark-mute); text-decoration: none; font-weight: 700; }
+  .footer-links a:hover { color: var(--primary); text-decoration: underline; }
+  .footer-legal { background: var(--surface-elevated); padding-block: 14px; }
+  .footer-legal-inner {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px;
+    color: var(--mute); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  }
 </style>
 </head>
 <body>
-<main>
-  <h1>ไฟสถานะระบบร้านยาจำลอง</h1>
-  <p class="sub">ตรวจว่า API ทั้ง 3 ไฟล์บน Vercel เชื่อมกับ Supabase ได้ครบ ทุกการตรวจ<strong>ไม่เปลี่ยนข้อมูล</strong>ในฐานข้อมูล</p>
+<div class="utility-bar">
+  <div class="shell utility-inner">
+    <span class="utility-tag">PHARMACY WORKSHOP</span>
+    <span>API &amp; SUPABASE DIAGNOSTICS</span>
+  </div>
+</div>
 
+<header class="primary-nav">
+  <div class="shell nav-inner">
+    <a class="brand" href="./index.html"><span class="brand-square" aria-hidden="true"></span>คลังข้อมูลยา</a>
+    <nav class="nav-links" aria-label="เมนูนำทาง">
+      <a href="./index.html">หน้าแรก</a>
+      <a href="./dashboard.html">Dashboard คลังยา</a>
+      <a href="./admin.html">จัดการระบบ</a>
+      <a href="./status.html" aria-current="page">ตรวจสถานะระบบ</a>
+    </nav>
+  </div>
+</header>
+
+<div class="breadcrumb-bar" aria-label="ตำแหน่งปัจจุบัน">
+  <div class="shell breadcrumb-inner">
+    <div class="breadcrumb-trail">
+      <a href="./index.html">หน้าแรก</a>
+      <span class="crumb-sep" aria-hidden="true">/</span>
+      <span>ตรวจสถานะระบบ</span>
+    </div>
+    <span style="color:var(--mute);font-size:12px;font-weight:400;">ข้อมูลทั้งหมดเป็นข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
+  </div>
+</div>
+
+<section class="hero-band">
+  <div class="narrow">
+    <div class="eyebrow">SYSTEM HEALTH CHECK</div>
+    <h1>ไฟสถานะระบบร้านยาจำลอง</h1>
+    <p class="sub">ตรวจว่า API ทั้ง 3 ไฟล์บน Vercel เชื่อมกับ Supabase ได้ครบ ทุกการตรวจ<strong>ไม่เปลี่ยนข้อมูล</strong>ในฐานข้อมูล</p>
+  </div>
+</section>
+
+<main class="narrow">
   <div id="where" class="banner warn"></div>
 
   <section class="panel">
@@ -63,7 +210,7 @@
       <input id="code" type="password" autocomplete="off" placeholder="ใช้เฉพาะไฟดวงที่ 5 เว้นว่างได้">
     </div>
     <p class="note">รหัสถูกส่งไปที่ <code>/api/admin</code> ทาง header เท่านั้น หน้านี้ไม่บันทึกรหัสไว้ที่ใด ปิดแท็บแล้วรหัสหายไป</p>
-    <div class="row" style="margin-top:12px">
+    <div class="row" style="margin-top:14px">
       <button id="run">ตรวจทั้งหมด</button>
       <span id="summary" class="summary"></span>
     </div>
@@ -71,6 +218,24 @@
 
   <ol class="checks" id="checks"></ol>
 </main>
+
+<footer>
+  <div class="shell footer-inner">
+    <span>ข้อมูลทั้งหมดเป็นข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</span>
+    <div class="footer-links">
+      <a href="./index.html">หน้าแรก</a>
+      <a href="./pos.html">หน้าขายยา</a>
+      <a href="./admin.html">จัดการระบบ</a>
+      <a href="./dashboard.html">Dashboard คลังยา</a>
+    </div>
+  </div>
+  <div class="footer-legal">
+    <div class="shell footer-legal-inner">
+      <span>WORKSHOP ระบบร้านยาจำลอง</span>
+      <span>DESIGN-NVIDIA SYSTEM · SUPABASE + VERCEL</span>
+    </div>
+  </div>
+</footer>
 
 <script>
 // ---------- รายการไฟ ----------

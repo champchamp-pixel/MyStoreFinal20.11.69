@@ -664,8 +664,8 @@ function mountCharts() {
   const categories = new Map();
   for (const { row } of model.catalog) categories.set(row.category, (categories.get(row.category) ?? 0) + 1);
   const ranked = [...categories].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'th'));
-  const palette = ['#003c33', '#347d6c', '#ff7759', '#1863dc', '#a2629d', '#bc8029', '#667ca6', '#668449',
-    '#b14f63', '#347981', '#969558', '#88663c', '#5260a6', '#e88d60', '#447b96', '#8f8466'];
+  const palette = ['#76b900', '#000000', '#5a8d00', '#0046a4', '#5e5e5e', '#df6500', '#952fc6', '#3f8500',
+    '#1a1a1a', '#757575', '#ef9100', '#4d1368', '#333333', '#e52020', '#898989', '#a7a7a7'];
   const total = model.catalog.length;
   let end = 0;
   let hovered = '';

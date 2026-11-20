@@ -7,23 +7,35 @@
   <title>ระบบร้านยาจำลอง</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #121212;
-      --card: #181818;
-      --card-hover: #222222;
-      --card-active: #282828;
-      --border: #2a2a2a;
-      --text: #ffffff;
-      --muted: #b3b3b3;
-      --accent: #1ed760;
-      --accent-soft: rgba(30, 215, 96, 0.14);
-      --accent-border: rgba(30, 215, 96, 0.45);
-      --warn-bg: rgba(255, 193, 7, 0.1);
-      --warn-border: rgba(255, 193, 7, 0.35);
-      --warn-text: #ffd666;
+      color-scheme: light;
+      --primary: #76b900;
+      --on-primary: #000000;
+      --primary-dark: #5a8d00;
+      --ink: #000000;
+      --canvas: #ffffff;
+      --surface-dark: #000000;
+      --surface-soft: #f7f7f7;
+      --surface-elevated: #1a1a1a;
+      --hairline: #cccccc;
+      --hairline-strong: #5e5e5e;
+      --body: #1a1a1a;
+      --mute: #757575;
+      --stone: #898989;
+      --ash: #a7a7a7;
+      --on-dark: #ffffff;
+      --on-dark-mute: rgba(255, 255, 255, 0.7);
+      --link-blue: #0046a4;
+      --error: #e52020;
+      --warning: #df6500;
+      --warning-bright: #ef9100;
+      --success-deep: #3f8500;
+      --yellow-pale: #feeeb2;
+      --radius-none: 0px;
+      --radius-sm: 2px;
+      --font: 'Inter', 'Noto Sans Thai', Arial, sans-serif;
     }
 
     *, *::before, *::after {
@@ -31,83 +43,334 @@
     }
 
     html {
-      background: var(--bg);
+      background: var(--surface-dark);
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
       margin: 0;
       min-height: 100dvh;
-      background: var(--bg);
-      color: var(--text);
-      font: 400 16px/1.6 'Noto Sans Thai', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--canvas);
+      color: var(--body);
+      font: 400 16px/1.5 var(--font);
       display: flex;
       flex-direction: column;
     }
 
-    main {
-      width: min(680px, 100%);
-      margin: 0 auto;
-      padding: clamp(24px, 5vw, 48px) 16px 36px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    h1, h2, h3, p {
+      margin: 0;
     }
 
-    .hero {
+    :focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .container {
+      width: min(1280px, 100%);
+      margin-inline: auto;
+      padding-inline: clamp(16px, 4vw, 48px);
+    }
+
+    /* Utility bar + Primary nav (Black Canvas) */
+    .utility-bar {
+      background: var(--surface-dark);
+      color: var(--on-dark-mute);
+      border-bottom: 1px solid #222222;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .utility-inner {
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-block: 6px;
+    }
+
+    .utility-tag {
+      color: var(--on-dark);
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .primary-nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--surface-dark);
+      color: var(--on-dark);
+      border-bottom: 1px solid var(--hairline-strong);
+      box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px 24px;
+      padding-block: 8px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--on-dark);
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-square {
+      width: 12px;
+      height: 12px;
+      background: var(--primary);
+      border-radius: var(--radius-none);
+      flex: 0 0 12px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px 20px;
+    }
+
+    .nav-links a {
+      color: var(--on-dark-mute);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 10px 0;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-links a:hover,
+    .nav-links a[aria-current="page"] {
+      color: var(--on-dark);
+      border-bottom-color: var(--primary);
+    }
+
+    /* Dark Hero Chapter */
+    .hero-chapter {
+      background: var(--surface-dark);
+      color: var(--on-dark);
+      border-radius: var(--radius-none);
+      padding-block: clamp(40px, 6vw, 80px);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+      gap: clamp(24px, 4vw, 48px);
+      align-items: end;
+    }
+
+    .hero-copy {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 16px;
+      max-width: 680px;
     }
 
     .eyebrow {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      align-self: flex-start;
-      padding: 4px 12px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      border: 1px solid var(--accent-border);
-      color: var(--accent);
+      gap: 10px;
+      color: var(--primary);
       font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
+      font-weight: 700;
+      line-height: 1.43;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
-    .eyebrow-dot {
+    .eyebrow::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      background: var(--primary);
+      flex: 0 0 12px;
+    }
+
+    .hero-copy h1 {
+      color: var(--on-dark);
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .hero-sub {
+      color: var(--on-dark-mute);
+      font-size: clamp(16px, 2.2vw, 20px);
+      font-weight: 400;
+      line-height: 1.55;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 11px 24px;
+      background: var(--primary);
+      color: var(--on-primary);
+      border: 0;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.25;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:active {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline-dark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 11px 20px;
+      background: transparent;
+      color: var(--on-dark);
+      border: 1px solid var(--on-dark);
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.25;
+      text-decoration: none;
+    }
+
+    .btn-outline-dark:hover,
+    .btn-outline-dark:active {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Live System Telemetry Panel on Dark Canvas */
+    .system-panel {
+      position: relative;
+      background: var(--surface-elevated);
+      border: 1px solid var(--hairline-strong);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .system-panel::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 12px;
+      height: 12px;
+      background: var(--primary);
+    }
+
+    .system-label {
+      color: var(--on-dark-mute);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .system-status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--on-dark);
+    }
+
+    .status-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--accent);
+      background: var(--stone);
       flex: 0 0 8px;
     }
 
-    h1 {
-      margin: 4px 0 0;
-      font-size: clamp(28px, 6vw, 36px);
+    .system-panel.is-ok .status-dot {
+      background: var(--primary);
+    }
+
+    .system-panel.is-warn .status-dot {
+      background: var(--warning-bright);
+    }
+
+    .system-meta {
+      color: var(--on-dark-mute);
+      font-size: 14px;
+      line-height: 1.45;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Paper-White Body Canvas */
+    main {
+      background: var(--canvas);
+      flex: 1;
+      padding-block: clamp(32px, 5vw, 64px);
+    }
+
+    .notice-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      margin-bottom: 32px;
+      background: var(--yellow-pale);
+      border: 1px solid var(--warning);
+      border-left: 4px solid var(--warning);
+      border-radius: var(--radius-sm);
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .section-header {
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .section-kicker {
+      color: var(--mute);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .section-header h2 {
+      color: var(--ink);
+      font-size: clamp(24px, 3.5vw, 36px);
       font-weight: 700;
       line-height: 1.25;
-      letter-spacing: -0.01em;
-    }
-
-    .subtitle {
-      margin: 0;
-      color: var(--muted);
-      font-size: 16px;
-    }
-
-    .notice {
-      margin: 0;
-      padding: 12px 16px;
-      border-radius: 12px;
-      background: var(--warn-bg);
-      border: 1px solid var(--warn-border);
-      color: var(--warn-text);
-      font-size: 15px;
-      font-weight: 600;
-      line-height: 1.5;
     }
 
     .menu-list {
@@ -115,188 +378,295 @@
       margin: 0;
       padding: 0;
       display: grid;
-      gap: 12px;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
     }
 
     .menu-link {
       position: relative;
       display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
-      gap: 14px;
-      min-height: 80px;
-      padding: 16px 18px;
-      border-radius: 16px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
+      gap: 16px;
+      min-height: 88px;
+      padding: 24px 24px 24px 28px;
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-sm);
+      color: var(--ink);
       text-decoration: none;
-      transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.12s ease;
     }
 
-    .menu-link:hover {
-      background: var(--card-hover);
-      border-color: var(--accent-border);
+    /* Signature NVIDIA corner square */
+    .menu-link::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 12px;
+      height: 12px;
+      background: var(--primary);
+      border-radius: var(--radius-none);
     }
 
-    .menu-link:active {
-      background: var(--card-active);
-      transform: scale(0.99);
-    }
-
+    .menu-link:hover,
+    .menu-link:active,
     .menu-link:focus-visible {
-      outline: 3px solid var(--accent);
-      outline-offset: 3px;
-      border-color: var(--accent);
-    }
-
-    .menu-index {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-weight: 700;
-      font-size: 15px;
-      display: grid;
-      place-items: center;
-      flex: 0 0 40px;
-      font-variant-numeric: tabular-nums;
+      border-color: var(--primary);
+      outline: 2px solid var(--primary);
+      outline-offset: -1px;
+      background: var(--surface-soft);
     }
 
     .menu-body {
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 6px;
+    }
+
+    .menu-meta-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .menu-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: var(--surface-soft);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-sm);
+      color: var(--body);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .menu-path {
+      color: var(--mute);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
     }
 
     .menu-title {
-      color: var(--text);
-      font-size: 18px;
+      color: var(--ink);
+      font-size: 20px;
       font-weight: 700;
-      line-height: 1.35;
+      line-height: 1.25;
     }
 
     .menu-desc {
-      color: var(--muted);
+      color: var(--body);
       font-size: 16px;
-      line-height: 1.45;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .menu-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--success-deep);
+      font-size: 16px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .menu-link:hover .menu-cta,
+    .menu-link:focus-visible .menu-cta {
+      color: var(--ink);
     }
 
     .menu-arrow {
-      color: var(--muted);
-      font-size: 24px;
+      color: var(--primary);
+      font-size: 20px;
       line-height: 1;
-      font-weight: 600;
-      padding-left: 4px;
-      transition: color 0.16s ease, transform 0.16s ease;
     }
 
-    .menu-link:hover .menu-arrow,
-    .menu-link:focus-visible .menu-arrow {
-      color: var(--accent);
-      transform: translateX(3px);
+    /* Dark Footer Chapter */
+    footer {
+      background: var(--surface-dark);
+      color: var(--on-dark-mute);
+      border-radius: var(--radius-none);
+      padding-top: 48px;
     }
 
-    .system-strip {
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--hairline-strong);
+    }
+
+    .footer-col h3 {
+      color: var(--on-dark);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .footer-col a {
+      color: var(--on-dark-mute);
+      text-decoration: none;
+      font-size: 15px;
+    }
+
+    .footer-col a:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .footer-col p {
+      color: var(--on-dark-mute);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .footer-bottom {
+      background: var(--surface-elevated);
+      margin-top: 0;
+      padding-block: 16px;
+    }
+
+    .footer-bottom-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 8px 14px;
-      padding: 12px 16px;
-      border-radius: 12px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 14px;
+      gap: 8px 24px;
+      color: var(--mute);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
-    .system-strip-main {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 0;
+    @media (min-width: 960px) {
+      .menu-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+      }
     }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #666666;
-      flex: 0 0 8px;
+    @media (max-width: 820px) {
+      .hero-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .footer-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
 
-    .system-strip.is-ok .status-dot {
-      background: var(--accent);
-    }
-
-    .system-strip.is-ok .system-strip-text {
-      color: var(--text);
-    }
-
-    .system-strip-meta {
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-    }
-
-    footer {
-      margin-top: auto;
-      padding-top: 8px;
-      color: var(--muted);
-      font-size: 14px;
-      text-align: center;
-    }
-
-    @media (min-width: 640px) {
+    @media (max-width: 520px) {
       .menu-link {
+        grid-template-columns: minmax(0, 1fr);
         min-height: 84px;
-        padding: 18px 22px;
+        padding: 20px 18px 20px 22px;
       }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .menu-link,
-      .menu-arrow {
-        transition: none;
-      }
-      .menu-link:active,
-      .menu-link:hover .menu-arrow,
-      .menu-link:focus-visible .menu-arrow {
-        transform: none;
+      .menu-cta {
+        margin-top: 4px;
       }
     }
   </style>
 </head>
 <body>
-  <main>
-    <header class="hero">
-      <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Workshop ร้านยาจำลอง</div>
-      <h1>ระบบจัดการร้านยาจำลอง</h1>
-      <p class="subtitle">เลือกหน้างานที่ต้องการใช้งานสำหรับเจ้าหน้าที่ร้านยา</p>
-    </header>
-
-    <p class="notice" role="note">ข้อมูลทั้งหมดเป็นข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</p>
-
-    <nav aria-label="เมนูหลักระบบร้านยาจำลอง">
-      <ul class="menu-list" id="menu-list"></ul>
-    </nav>
-
-    <div class="system-strip" id="system-strip" role="status" aria-live="polite">
-      <span class="system-strip-main">
-        <span class="status-dot" aria-hidden="true"></span>
-        <span class="system-strip-text" id="system-status">กำลังตรวจการเชื่อมต่อฐานข้อมูล…</span>
-      </span>
-      <span class="system-strip-meta" id="system-meta"></span>
+  <div class="utility-bar">
+    <div class="container utility-inner">
+      <span class="utility-tag">PHARMACY WORKSHOP</span>
+      <span>SUPABASE + VERCEL DATA API</span>
     </div>
+  </div>
 
-    <noscript>
-      <p class="notice">กรุณาเปิด JavaScript เพื่อแสดงรายการเมนูหลักของระบบ</p>
-    </noscript>
+  <header class="primary-nav">
+    <div class="container nav-inner">
+      <a class="brand" href="./index.html"><span class="brand-square" aria-hidden="true"></span>คลังข้อมูลยา</a>
+      <nav class="nav-links" aria-label="นำทางด่วน">
+        <a href="./index.html" aria-current="page">หน้าแรก</a>
+        <a href="./dashboard.html">Dashboard คลังยา</a>
+        <a href="./admin.html">จัดการระบบ</a>
+        <a href="./status.html">ตรวจสถานะระบบ</a>
+      </nav>
+    </div>
+  </header>
 
-    <footer>Workshop ระบบร้านยาจำลอง · เชื่อมต่อ Supabase ผ่าน Vercel API</footer>
+  <section class="hero-chapter" aria-labelledby="hero-title">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow">WORKSHOP PHARMACY PLATFORM</div>
+        <h1 id="hero-title">ระบบจัดการร้านยาจำลอง</h1>
+        <p class="hero-sub">ศูนย์รวมหน้างานสำหรับเจ้าหน้าที่ร้านยาจำลอง — ขายยา จัดการบัญชียาและคลังรายล็อต ดูภาพรวม Dashboard และตรวจสอบการเชื่อมต่อฐานข้อมูล Supabase</p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="./dashboard.html">เปิด Dashboard คลังยา</a>
+          <a class="btn-outline-dark" href="./status.html">ตรวจสถานะระบบ</a>
+        </div>
+      </div>
+
+      <aside class="system-panel" id="system-panel" role="status" aria-live="polite">
+        <span class="system-label">SUPABASE CONNECTION</span>
+        <div class="system-status-row">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="system-status">กำลังตรวจการเชื่อมต่อฐานข้อมูล…</span>
+        </div>
+        <p class="system-meta" id="system-meta">อ่านสถานะแบบอ่านอย่างเดียวผ่าน /api/data</p>
+      </aside>
+    </div>
+  </section>
+
+  <main>
+    <div class="container">
+      <p class="notice-banner" role="note">ข้อมูลทั้งหมดเป็นข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง</p>
+
+      <div class="section-header">
+        <span class="section-kicker">OPERATIONS MODULES</span>
+        <h2>เลือกหน้างานที่ต้องการใช้งาน</h2>
+      </div>
+
+      <nav aria-label="เมนูหลักระบบร้านยาจำลอง">
+        <ul class="menu-list" id="menu-list"></ul>
+      </nav>
+
+      <noscript>
+        <p class="notice-banner">กรุณาเปิด JavaScript เพื่อแสดงรายการเมนูหลักของระบบ</p>
+      </noscript>
+    </div>
   </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <h3>หน้างานระบบ</h3>
+        <ul id="footer-links"></ul>
+      </div>
+      <div class="footer-col">
+        <h3>สถาปัตยกรรมเชื่อมต่อ</h3>
+        <p>เชื่อมต่อฐานข้อมูล Supabase ผ่าน Vercel Serverless Functions (/api/data, /api/dispense, /api/admin) พร้อมการควบคุมสิทธิ์ RLS</p>
+      </div>
+      <div class="footer-col">
+        <h3>หมายเหตุด้านข้อมูล</h3>
+        <p>ข้อมูลทั้งหมดเป็นข้อมูลจำลอง ห้ามใส่ชื่อผู้ป่วยจริง ปุ่มที่ชี้ไปหน้าที่ยังไม่ได้สร้างจะแสดง 404 จนกว่าจะ push ไฟล์นั้นขึ้นระบบ</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <span>WORKSHOP ระบบร้านยาจำลอง</span>
+        <span>DESIGN-NVIDIA SYSTEM · SUPABASE + VERCEL</span>
+      </div>
+    </div>
+  </footer>
 
   <script>
     // เพิ่มหรือลบปุ่มหน้างานได้ด้วยการแก้หนึ่งบรรทัดในอาร์เรย์นี้
@@ -309,22 +679,31 @@
 
     function buildMenu(items) {
       const list = document.getElementById('menu-list');
-      const fragment = document.createDocumentFragment();
+      const footerList = document.getElementById('footer-links');
+      const menuFrag = document.createDocumentFragment();
+      const footerFrag = document.createDocumentFragment();
 
       items.forEach((item, index) => {
         const li = document.createElement('li');
-
         const link = document.createElement('a');
         link.className = 'menu-link';
         link.setAttribute('href', item.href);
 
-        const badge = document.createElement('span');
-        badge.className = 'menu-index';
-        badge.setAttribute('aria-hidden', 'true');
-        badge.textContent = String(index + 1).padStart(2, '0');
-
         const body = document.createElement('span');
         body.className = 'menu-body';
+
+        const metaRow = document.createElement('span');
+        metaRow.className = 'menu-meta-row';
+
+        const badge = document.createElement('span');
+        badge.className = 'menu-badge';
+        badge.textContent = String(index + 1).padStart(2, '0');
+
+        const pathTag = document.createElement('span');
+        pathTag.className = 'menu-path';
+        pathTag.textContent = item.href;
+
+        metaRow.append(badge, pathTag);
 
         const title = document.createElement('span');
         title.className = 'menu-title';
@@ -334,27 +713,43 @@
         desc.className = 'menu-desc';
         desc.textContent = item.desc;
 
+        body.append(metaRow, title, desc);
+
+        const cta = document.createElement('span');
+        cta.className = 'menu-cta';
+        const ctaLabel = document.createElement('span');
+        ctaLabel.textContent = 'เปิดหน้างาน';
         const arrow = document.createElement('span');
         arrow.className = 'menu-arrow';
         arrow.setAttribute('aria-hidden', 'true');
-        arrow.textContent = '›';
+        arrow.textContent = '→';
+        cta.append(ctaLabel, arrow);
 
-        body.append(title, desc);
-        link.append(badge, body, arrow);
+        link.append(body, cta);
         li.append(link);
-        fragment.append(li);
+        menuFrag.append(li);
+
+        const fLi = document.createElement('li');
+        const fLink = document.createElement('a');
+        fLink.setAttribute('href', item.href);
+        fLink.textContent = item.title;
+        fLi.append(fLink);
+        footerFrag.append(fLi);
       });
 
-      list.replaceChildren(fragment);
+      list.replaceChildren(menuFrag);
+      footerList.replaceChildren(footerFrag);
     }
 
     async function checkSystemSummary() {
-      const strip = document.getElementById('system-strip');
+      const panel = document.getElementById('system-panel');
       const statusEl = document.getElementById('system-status');
       const metaEl = document.getElementById('system-meta');
 
       if (location.protocol === 'file:') {
-        statusEl.textContent = 'เปิดจากไฟล์ในเครื่อง (เปิดบนลิงก์ Vercel เพื่อเชื่อมฐานข้อมูล)';
+        panel.classList.add('is-warn');
+        statusEl.textContent = 'เปิดจากไฟล์ในเครื่อง';
+        metaEl.textContent = 'เปิดผ่านลิงก์ Vercel เพื่อเชื่อมต่อฐานข้อมูล Supabase (/api/data)';
         return;
       }
 
@@ -367,14 +762,18 @@
         if (response.ok && data && data.drugs && data.stock && data.dispense_log) {
           const asOf = (data.drugs.meta && data.drugs.meta.as_of) || '-';
           const num = new Intl.NumberFormat('th-TH');
-          strip.classList.add('is-ok');
+          panel.classList.add('is-ok');
           statusEl.textContent = 'เชื่อมต่อ Supabase แล้ว';
-          metaEl.textContent = `วันอ้างอิง ${asOf} · ยา ${num.format(data.drugs.items.length)} · ล็อต ${num.format(data.stock.items.length)}`;
+          metaEl.textContent = `วันอ้างอิง ${asOf} · ยา ${num.format(data.drugs.items.length)} รายการ · ล็อต ${num.format(data.stock.items.length)} · จ่ายยา ${num.format(data.dispense_log.items.length)}`;
         } else {
-          statusEl.textContent = 'ยังเชื่อมต่อฐานข้อมูลไม่ได้ — กด "ตรวจสถานะระบบ" เพื่อดูรายละเอียด';
+          panel.classList.add('is-warn');
+          statusEl.textContent = 'ยังเชื่อมต่อฐานข้อมูลไม่ได้';
+          metaEl.textContent = 'กด "ตรวจสถานะระบบ" เพื่อดูสถานะไฟทั้ง 5 ดวง';
         }
       } catch {
-        statusEl.textContent = 'ยังเชื่อมต่อฐานข้อมูลไม่ได้ — กด "ตรวจสถานะระบบ" เพื่อดูรายละเอียด';
+        panel.classList.add('is-warn');
+        statusEl.textContent = 'ยังเชื่อมต่อฐานข้อมูลไม่ได้';
+        metaEl.textContent = 'กด "ตรวจสถานะระบบ" เพื่อดูรายละเอียดการเชื่อมต่อ';
       }
     }
 
