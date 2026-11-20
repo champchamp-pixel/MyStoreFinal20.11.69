@@ -3,7 +3,10 @@ const number = new Intl.NumberFormat('th-TH', { maximumFractionDigits: 4 });
 const currency = new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const percent = new Intl.NumberFormat('th-TH', { style: 'percent', maximumFractionDigits: 1 });
 const thaiDate = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeZone: 'Asia/Bangkok' });
-const thaiTime = new Intl.DateTimeFormat('th-TH', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Bangkok' });
+const thaiTime = new Intl.DateTimeFormat('th-TH', {
+  day: 'numeric', month: 'short', year: 'numeric',
+  hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Bangkok',
+});
 const thaiClock = new Intl.DateTimeFormat('th-TH', { timeStyle: 'medium', timeZone: 'Asia/Bangkok' });
 const narrow = matchMedia('(max-width: 820px)');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -115,18 +118,31 @@ function dayLabel(value) {
 
 function eventTime(value) {
   if (typeof value !== 'string') return NaN;
-  const match = /^(\d{4}-\d{2}-\d{2})[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?(Z|[+-]\d{2}:\d{2})?$/i.exec(value.trim());
+  const match = /^(\d{4}-\d{2}-\d{2})[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?(Z|[+-]\d{2}(?::?\d{2})?)?$/i.exec(value.trim());
   if (!match) return NaN;
-  const [, datePart, hh, mm, ss = '00', frac = '', tz] = match;
+  const [, datePart, hh, mm, ss = '00', frac = '', rawTz] = match;
   if (!validDate(datePart)) return NaN;
   if (Number(hh) > 23 || Number(mm) > 59 || Number(ss) > 59) return NaN;
-  if (tz && !/^z$/i.test(tz)) {
-    const tzParts = /^([+-])(\d{2}):(\d{2})$/.exec(tz);
-    if (!tzParts || Number(tzParts[2]) > 23 || Number(tzParts[3]) > 59) return NaN;
+  let tz = '+07:00';
+  if (rawTz) {
+    if (/^z$/i.test(rawTz)) {
+      tz = 'Z';
+    } else {
+      const tzParts = /^([+-])(\d{2})(?::?(\d{2}))?$/.exec(rawTz);
+      const th = tzParts ? Number(tzParts[2]) : 99;
+      const tm = tzParts && tzParts[3] ? Number(tzParts[3]) : 0;
+      if (!tzParts || th > 23 || tm > 59) return NaN;
+      tz = `${tzParts[1]}${tzParts[2]}:${tzParts[3] || '00'}`;
+    }
   }
   const ms = frac ? `.${frac.slice(0, 3).padEnd(3, '0')}` : '';
   // คอลัมน์ dispense_log.datetime ใน Supabase เป็น timestamp without time zone ที่บันทึกเวลา Asia/Bangkok (+07:00)
-  return Date.parse(`${datePart}T${hh}:${mm}:${ss}${ms}${tz || '+07:00'}`);
+  return Date.parse(`${datePart}T${hh}:${mm}:${ss}${ms}${tz}`);
+}
+
+function dispenseSeqNum(id) {
+  const match = /^D(\d+)$/i.exec(String(id ?? '').trim());
+  return match ? Number(match[1]) : 0;
 }
 
 function bangkokDate(timestamp) {
@@ -265,7 +281,19 @@ function buildModel() {
     return { row, product, issues, unitCost, daysLeft };
   });
 
-  const eventsModel = eventsRaw.map((row) => {
+  const todayBkk = bangkokDate(Date.now());
+  const eventsSorted = [...eventsRaw].sort((a, b) => {
+    const aNum = dispenseSeqNum(a.dispense_id);
+    const bNum = dispenseSeqNum(b.dispense_id);
+    const aLive = aNum > 150 ? 1 : 0;
+    const bLive = bNum > 150 ? 1 : 0;
+    if (aLive !== bLive) return bLive - aLive;
+    if (aLive && bLive) return bNum - aNum;
+    const dtCmp = String(b.datetime || '').localeCompare(String(a.datetime || ''));
+    return dtCmp !== 0 ? dtCmp : bNum - aNum;
+  });
+
+  const eventsModel = eventsSorted.map((row) => {
     const issues = [];
     const product = materials.get(normalize(row.sku));
     const matches = lots.get(lotKey(row)) ?? [];
@@ -273,6 +301,7 @@ function buildModel() {
     const timestamp = eventTime(row.datetime);
     const linkedIncidents = incidentsByDispense.get(row.dispense_id) ?? [];
     const openIncidents = linkedIncidents.filter((inc) => inc.status === 'open');
+    const isLiveTransaction = dispenseSeqNum(row.dispense_id) > 150;
     if (datasets.catalog && !product) issues.push('unknown-sku');
     if (datasets.stock && !matches.length) issues.push('missing-lot');
     if (matches.length > 1) issues.push('ambiguous-lot');
@@ -282,8 +311,10 @@ function buildModel() {
       const eventDate = bangkokDate(timestamp);
       if (period.length === 2) {
         if (eventDate < period[0] || eventDate > period[1]) issues.push('outside-period');
-      } else if (validDate(snapshot) && eventDate > snapshot) {
-        issues.push('after-as-of');
+      } else if (validDate(snapshot)) {
+        // รายการที่ขาย/คืนจริงในระบบ (> D0150) ใช้วันจริงวันนี้ จึงไม่แจ้งเตือนเท็จว่าเกิน as_of
+        const cutoff = isLiveTransaction && todayBkk > snapshot ? todayBkk : snapshot;
+        if (eventDate > cutoff) issues.push('after-as-of');
       }
       if (row.type === 'dispense' && matches.length === 1 && validDate(lot.expiry) && eventDate > lot.expiry) {
         issues.push('after-expiry');

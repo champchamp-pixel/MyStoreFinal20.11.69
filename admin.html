@@ -681,6 +681,15 @@ function fmtDate(v) {
   const s = String(v);
   return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : s;
 }
+function fmtDateTime(v) {
+  if (v === null || v === undefined || v === '') return '—';
+  const s = String(v).trim().replace('T', ' ').replace(/(?:Z|[+-]\d{2}(?::?\d{2})?)$/i, '');
+  return s.length >= 19 ? s.slice(0, 19) : s;
+}
+function dispenseSeqNum(id) {
+  const m = /^D(\d+)$/i.exec(str(id).trim());
+  return m ? Number(m[1]) : 0;
+}
 function isTrue(v) { return v === true || v === 'true' || v === 1 || v === 't'; }
 function drugLabel(sku) {
   const d = state.drugBySku.get(sku);
@@ -985,8 +994,14 @@ function stockRow(s) {
    แท็บ รายการจ่าย
    ========================================================= */
 function sortedLog() {
-  // เรียงใหม่ไปเก่า ตามข้อความวันเวลาที่เซิร์ฟเวอร์ส่ง (ไม่แปลงเขตเวลา) แล้วตามเลขที่ใบจ่าย
+  // เรียงรายการที่บันทึกใหม่ (เลขที่ > D0150) ขึ้นบนสุดก่อนเสมอ แล้วตามด้วยรายการเดิมเรียงตามวันเวลาล่าสุด
   return [...state.log].sort((a, b) => {
+    const aNum = dispenseSeqNum(a.dispense_id);
+    const bNum = dispenseSeqNum(b.dispense_id);
+    const aLive = aNum > 150 ? 1 : 0;
+    const bLive = bNum > 150 ? 1 : 0;
+    if (aLive !== bLive) return bLive - aLive;
+    if (aLive && bLive) return bNum - aNum;
     const t = str(b.datetime).localeCompare(str(a.datetime));
     return t !== 0 ? t : str(b.dispense_id).localeCompare(str(a.dispense_id), 'en', { numeric: true });
   });
@@ -1023,7 +1038,7 @@ function logRow(r) {
   }
   return el('tr', null,
     td(r.dispense_id, 'code'),
-    td(r.datetime, 'nowrap'),
+    td(fmtDateTime(r.datetime), 'nowrap'),
     td(r.sku, 'code'),
     td(r.lot, 'nowrap'),
     td(fmtInt(r.qty), 'num'),
@@ -1467,7 +1482,7 @@ function openFixExpiry(s) {
    ========================================================= */
 function dispDesc(r) {
   return 'ใบจ่าย ' + str(r.dispense_id) + ' (' + str(r.sku) + ' เลขล็อต ' + str(r.lot) + ' ผู้ป่วย ' + str(r.patient_code) +
-    ' วันที่ ' + str(r.datetime) + ') จ่ายไป ' + fmtInt(r.qty);
+    ' วันที่ ' + fmtDateTime(r.datetime) + ') จ่ายไป ' + fmtInt(r.qty);
 }
 
 function openReturn(r) {

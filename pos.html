@@ -581,8 +581,13 @@
     // แสดงวันเวลาตามข้อความจากเซิร์ฟเวอร์โดยตรง (เทียบและจัดรูปแบบด้วยสตริงเท่านั้น)
     function formatServerDateTime(dt) {
       if (typeof dt !== 'string' || !dt.trim()) return '—';
-      const cleaned = dt.trim().replace('T', ' ');
-      return cleaned.length >= 16 ? cleaned.slice(0, 16) : cleaned;
+      const cleaned = dt.trim().replace('T', ' ').replace(/(?:Z|[+-]\d{2}(?::?\d{2})?)$/i, '');
+      return cleaned.length >= 19 ? cleaned.slice(0, 19) : cleaned;
+    }
+
+    function dispenseSeqNum(id) {
+      const m = /^D(\d+)$/i.exec(String(id || '').trim());
+      return m ? Number(m[1]) : 0;
     }
 
     // =========================================================================
@@ -897,11 +902,17 @@
     }
 
     function renderRecentLog() {
-      // เรียงรายการจ่ายล่าสุดโดยเทียบข้อความวันเวลาและเลขที่ใบจ่ายโดยตรง
+      // เรียงรายการจ่ายใหม่ที่บันทึกจริง (เลขที่ > D0150) ขึ้นบนสุดก่อนเสมอ ตามด้วยรายการเดิมเรียงตามวันเวลาล่าสุด
       const sorted = [...state.dispenseLog].sort((a, b) => {
+        const aNum = dispenseSeqNum(a.dispense_id);
+        const bNum = dispenseSeqNum(b.dispense_id);
+        const aLive = aNum > 150 ? 1 : 0;
+        const bLive = bNum > 150 ? 1 : 0;
+        if (aLive !== bLive) return bLive - aLive;
+        if (aLive && bLive) return bNum - aNum;
         const dtCmp = String(b.datetime || '').localeCompare(String(a.datetime || ''));
         if (dtCmp !== 0) return dtCmp;
-        return String(b.dispense_id || '').localeCompare(String(a.dispense_id || ''), 'en', { numeric: true });
+        return bNum - aNum;
       });
       const latest = sorted.slice(0, RECENT_LIMIT);
       $('recent-count').textContent = 'ทั้งหมด ' + numFmt.format(state.dispenseLog.length) + ' รายการ (แสดงล่าสุด ' + latest.length + ' แถว)';
